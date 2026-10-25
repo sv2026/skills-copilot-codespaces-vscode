@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import './App.css'
 import { ACTION_CARDS, REVIEW_NEEDED_ITEMS, type ActionCard } from './resourceData'
+import { VisualWalkthrough } from './components/VisualWalkthrough'
 
 type Question = {
   id: string
@@ -434,6 +435,7 @@ function App() {
                         Last verified: {resource.lastVerified}
                       </p>
                       {resource.note && <p>{resource.note}</p>}
+                      {resource.walkthrough && <VisualWalkthrough walkthrough={resource.walkthrough} />}
                     </li>
                   ))}
                 </ul>

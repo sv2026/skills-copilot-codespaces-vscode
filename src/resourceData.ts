@@ -7,6 +7,33 @@ export type ResourceLink = {
   verificationStatus: VerificationStatus
   lastVerified: string
   note?: string
+  walkthrough?: VisualWalkthrough
+}
+
+export type WalkthroughAnnotation = {
+  kind: 'highlight' | 'arrow'
+  label: string
+}
+
+export type WalkthroughStep = {
+  id: string
+  heading: string
+  instruction: string
+  screenshotAlt: string
+  screenshotUrl?: string
+  annotations: WalkthroughAnnotation[]
+}
+
+export type VisualWalkthrough = {
+  id: string
+  title: string
+  officialWebsiteUrl: string
+  status: 'Draft' | 'Verified' | 'Needs recapture'
+  lastCapturedAt?: string
+  mayBeOutdated: boolean
+  outdatedReason?: string
+  aiSupportNotes: string[]
+  steps: WalkthroughStep[]
 }
 
 export type ActionCard = {
@@ -87,6 +114,42 @@ export const ACTION_CARDS: ActionCard[] = [
         url: 'https://www.washingtonconnection.org/',
         verificationStatus: 'Verified',
         lastVerified: today,
+        walkthrough: {
+          id: 'wa-connection-basic-food',
+          title: 'Washington Connection navigation walkthrough (draft)',
+          officialWebsiteUrl: 'https://www.washingtonconnection.org/',
+          status: 'Draft',
+          mayBeOutdated: true,
+          outdatedReason:
+            'Screenshot capture and step-by-step verification are still pending and must be completed before relying on this guide.',
+          aiSupportNotes: [
+            'This prototype only stores walkthrough metadata and annotations.',
+            'To generate real screenshots, connect an external browsing/screenshot service (for example Playwright running in secure infrastructure).',
+            'To generate or update annotations, connect an AI service that can process captured screenshots and requires human review before publishing.',
+          ],
+          steps: [
+            {
+              id: 'open-homepage',
+              heading: 'Open the official homepage',
+              instruction:
+                'Visit the official Washington Connection homepage and manually confirm the visible page title before using this guide.',
+              screenshotAlt:
+                'Placeholder for a verified screenshot of the Washington Connection homepage.',
+              annotations: [{ kind: 'highlight', label: 'Capture the main navigation area after verification.' }],
+            },
+            {
+              id: 'find-application-entry',
+              heading: 'Find where to begin an application',
+              instruction:
+                'After confirming the live page content, capture the section that starts the benefits application flow and add numbered annotations for each click.',
+              screenshotAlt:
+                'Placeholder for a verified screenshot showing where users begin the application flow.',
+              annotations: [
+                { kind: 'arrow', label: 'Point to the verified entry action for starting an application.' },
+              ],
+            },
+          ],
+        },
       },
       {
         label: 'Washington DSHS Basic Food',

@@ -255,6 +255,60 @@ button:disabled {
   padding-left: 0.7rem;
 }
 
+.walkthrough {
+  margin-top: 0.85rem;
+  border-top: 1px solid #d8e2ef;
+  padding-top: 0.85rem;
+}
+
+.walkthrough-warning {
+  border-left: 4px solid #b26a00;
+  background: #fff9ef;
+  padding: 0.55rem 0.7rem;
+}
+
+.walkthrough-step-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.walkthrough-step {
+  border: 1px solid #d8e2ef;
+  border-radius: 0.6rem;
+  padding: 0.65rem;
+}
+
+.walkthrough-step h6 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.walkthrough-figure {
+  margin: 0.5rem 0;
+  border: 1px dashed #b7c8de;
+  border-radius: 0.5rem;
+  padding: 0.65rem;
+  background: #f7faff;
+}
+
+.walkthrough-figure img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.4rem;
+}
+
+.walkthrough-figure figcaption {
+  margin: 0;
+}
+
+.walkthrough-ai-notes {
+  border-top: 1px solid #d8e2ef;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+}
+
 @media (max-width: 768px) {
   .app-shell {
     padding: 0.6rem;
