@@ -8,6 +8,8 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
   return (
     <section className="walkthrough" aria-label={`${walkthrough.title} walkthrough`}>
       <h5>{walkthrough.title}</h5>
+      {walkthrough.serviceName && <p>Service: {walkthrough.serviceName}</p>}
+      {walkthrough.summary && <p className="walkthrough-summary">{walkthrough.summary}</p>}
       <p>
         Official website:{' '}
         <a href={walkthrough.officialWebsiteUrl} target="_blank" rel="noreferrer">
@@ -29,12 +31,25 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
             <h6>
               Step {index + 1}: {step.heading}
             </h6>
+            <p className="walkthrough-step-status">
+              Verification: <strong>{step.verificationStatus}</strong>
+            </p>
             <p>{step.instruction}</p>
+            {step.sourceUrl && (
+              <p>
+                Source:{' '}
+                <a href={step.sourceUrl} target="_blank" rel="noreferrer">
+                  Official page
+                </a>
+              </p>
+            )}
             <figure className="walkthrough-figure">
               {step.screenshotUrl ? (
                 <img src={step.screenshotUrl} alt={step.screenshotAlt} loading="lazy" />
               ) : (
-                <figcaption>No verified screenshot has been captured for this step yet.</figcaption>
+                <figcaption>
+                  {step.screenshotAlt || 'No verified screenshot has been captured for this step yet.'}
+                </figcaption>
               )}
             </figure>
             <ul>

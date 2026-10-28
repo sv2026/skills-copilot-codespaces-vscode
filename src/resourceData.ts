@@ -10,6 +10,8 @@ export type ResourceLink = {
   walkthrough?: VisualWalkthrough
 }
 
+export type WalkthroughStepVerificationStatus = 'confirmed' | 'partially explored' | 'needs review'
+
 export type WalkthroughAnnotation = {
   kind: 'highlight' | 'arrow'
   label: string
@@ -21,18 +23,23 @@ export type WalkthroughStep = {
   instruction: string
   screenshotAlt: string
   screenshotUrl?: string
+  sourceUrl?: string
+  verificationStatus: WalkthroughStepVerificationStatus
   annotations: WalkthroughAnnotation[]
 }
 
 export type VisualWalkthrough = {
   id: string
   title: string
+  serviceName: string
   officialWebsiteUrl: string
-  status: 'Draft' | 'Verified' | 'Needs recapture'
+  status: 'Draft' | 'Verified' | 'Needs review'
   lastCapturedAt?: string
+  checkedOn?: string
   mayBeOutdated: boolean
   outdatedReason?: string
   aiSupportNotes: string[]
+  summary?: string
   steps: WalkthroughStep[]
 }
 
@@ -54,6 +61,7 @@ export type ActionCard = {
 }
 
 const today = '2026-10-25'
+const birthRecordCheckDate = '2026-10-26'
 
 export const ACTION_CARDS: ActionCard[] = [
   {
@@ -88,72 +96,66 @@ export const ACTION_CARDS: ActionCard[] = [
     ],
   },
   {
-    id: 'dshs-benefits',
-    title: 'Contact Washington DSHS about food and cash benefits',
+    id: 'dshs-food-assistance',
+    title: 'Contact Washington DSHS about food assistance',
     category: 'immediate',
     whyThisMatters:
-      'You may be able to begin parts of Basic Food and cash assistance applications even while replacing missing records.',
+      'Food assistance can help cover groceries while you work through other paperwork or school-related needs.',
     steps: [
-      'Open Washington Connection and start the application for Basic Food and cash assistance.',
-      'Select the benefits you need, then call DSHS to explain that children\'s Social Security numbers and birth certificates are currently unavailable.',
-      'Ask DSHS which verification steps can be completed now, which documents are required later, and whether alternatives apply in your case.',
+      'Open Washington Connection and start the Basic Food application if you need help with groceries right now.',
+      'Tell DSHS whether you need help with groceries only or if you are also applying for other supports.',
+      'Ask what documents are required now and what can be submitted later if you do not have them on hand.',
     ],
     usefulDocuments: {
       required: ['Program requirements vary; ask DSHS for the exact list tied to your application.'],
-      alternativesToConfirm: ['Ask DSHS what temporary or alternate verification may be accepted while records are missing.'],
-      helpful: ['Any prior case numbers, school records, or shelter paperwork.'],
-      unverified: ['Do not assume exemptions; confirm each requirement directly with DSHS.'],
+      alternativesToConfirm: ['Ask whether temporary or alternative verification can be used while records are missing.'],
+      helpful: ['Any prior benefit letters, shelter notes, or school-related paperwork.'],
+      unverified: ['Do not assume a decision before DSHS confirms the information required.'],
     },
     missingDocsPlan:
-      'Tell DSHS right away which records are missing and ask them to note that in your case so you can keep moving forward safely.',
+      'Ask DSHS what information they can take now and what can be completed later without delaying the food application.',
     endGoal:
-      'End goal: submit what you can now and leave with a checklist of remaining verification steps from DSHS.',
+      'End goal: confirm the right food-assistance path and complete the next step without unnecessary delays.',
     resources: [
       {
         label: 'Washington Connection',
         url: 'https://www.washingtonconnection.org/',
         verificationStatus: 'Verified',
         lastVerified: today,
-        walkthrough: {
-          id: 'wa-connection-basic-food',
-          title: 'Washington Connection navigation walkthrough (draft)',
-          officialWebsiteUrl: 'https://www.washingtonconnection.org/',
-          status: 'Draft',
-          mayBeOutdated: true,
-          outdatedReason:
-            'Screenshot capture and step-by-step verification are still pending and must be completed before relying on this guide.',
-          aiSupportNotes: [
-            'This prototype only stores walkthrough metadata and annotations.',
-            'To generate real screenshots, connect an external browsing/screenshot service (for example Playwright running in secure infrastructure).',
-            'To generate or update annotations, connect an AI service that can process captured screenshots and requires human review before publishing.',
-          ],
-          steps: [
-            {
-              id: 'open-homepage',
-              heading: 'Open the official homepage',
-              instruction:
-                'Visit the official Washington Connection homepage and manually confirm the visible page title before using this guide.',
-              screenshotAlt:
-                'Placeholder for a verified screenshot of the Washington Connection homepage.',
-              annotations: [{ kind: 'highlight', label: 'Capture the main navigation area after verification.' }],
-            },
-            {
-              id: 'find-application-entry',
-              heading: 'Find where to begin an application',
-              instruction:
-                'After confirming the live page content, capture the section that starts the benefits application flow and add numbered annotations for each click.',
-              screenshotAlt:
-                'Placeholder for a verified screenshot showing where users begin the application flow.',
-              annotations: [
-                { kind: 'arrow', label: 'Point to the verified entry action for starting an application.' },
-              ],
-            },
-          ],
-        },
       },
       {
         label: 'Washington DSHS Basic Food',
         url: 'https://www.dshs.wa.gov/family-food-and-housing-services/food-assistance/basic-food-benefits',
+        verificationStatus: 'Verified',
+        lastVerified: today,
+      },
+    ],
+  },
+  {
+    id: 'dshs-cash-assistance',
+    title: 'Contact Washington DSHS about cash assistance',
+    category: 'immediate',
+    whyThisMatters:
+      'Cash assistance can help with urgent household expenses when your income is not covering basic needs.',
+    steps: [
+      'Open Washington Connection and begin the cash-assistance application if this is a need you have selected.',
+      'Ask DSHS what documents are required now and which ones can be provided later if your records are incomplete.',
+      'Keep a written checklist of deadlines, case numbers, and next steps so you can follow up clearly.',
+    ],
+    usefulDocuments: {
+      required: ['Program requirements vary; ask DSHS for the exact list tied to your application.'],
+      alternativesToConfirm: ['Ask whether temporary or alternative verification can be used while records are missing.'],
+      helpful: ['Any prior benefit letters, pay stubs, or school or housing paperwork that may help explain your situation.'],
+      unverified: ['Do not assume a final decision before DSHS confirms the information required.'],
+    },
+    missingDocsPlan:
+      'Tell DSHS which records are missing and ask what can be submitted now versus later so your application can move forward.',
+    endGoal:
+      'End goal: clarify the cash-assistance path and complete the next step with a clear list of requirements.',
+    resources: [
+      {
+        label: 'Washington Connection',
+        url: 'https://www.washingtonconnection.org/',
         verificationStatus: 'Verified',
         lastVerified: today,
       },
@@ -163,9 +165,33 @@ export const ACTION_CARDS: ActionCard[] = [
         verificationStatus: 'Verified',
         lastVerified: today,
       },
+    ],
+  },
+  {
+    id: 'school-support',
+    title: 'Contact your school district about staying in your current school',
+    category: 'next',
+    whyThisMatters:
+      'School stability support can help families keep students in their current school while they work through paperwork, enrollment, or attendance concerns.',
+    steps: [
+      'Contact the school district attendance or enrollment office and explain that you want to keep your child in their current school.',
+      'Ask what records are needed right now and which records can be submitted later.',
+      'Request any transportation, enrollment, or attendance support that may be available without a housing crisis.',
+    ],
+    usefulDocuments: {
+      required: ['School requirements vary by district.'],
+      alternativesToConfirm: ['Ask what can be accepted temporarily while documents are being replaced.'],
+      helpful: ['Current school name, student name, and any existing student ID or school records.'],
+      unverified: ['Specific district procedures may vary and should be confirmed directly.'],
+    },
+    missingDocsPlan:
+      'Ask the school district what can be completed now so the student can stay in school while other records are recovered.',
+    endGoal:
+      'End goal: keep the student attached to their current school and get clear next steps for records or enrollment.',
+    resources: [
       {
-        label: 'DSHS customer service',
-        phone: '877-501-2233',
+        label: 'Washington school district enrollment support',
+        url: 'https://www.k12.wa.us/student-success/access-opportunity-education',
         verificationStatus: 'Verified',
         lastVerified: today,
       },
@@ -173,13 +199,13 @@ export const ACTION_CARDS: ActionCard[] = [
   },
   {
     id: 'school-liaison',
-    title: 'Contact the school district McKinney-Vento liaison',
+    title: 'Contact the school district support team for housing-related school stability',
     category: 'immediate',
     whyThisMatters:
-      'Students experiencing homelessness may have protections for immediate enrollment, school stability, transportation support, and meal access.',
+      'When a family is moving or temporarily housed, school districts may have extra supports for enrollment, attendance, transportation, and school continuity.',
     steps: [
       'Open the OSPI homelessness page, then open the liaison contact list for your district.',
-      'Call or email the liaison and explain your family is in a shelter or temporary housing.',
+      'Call or email the liaison and explain your family is in temporary housing or is moving between placements.',
       'Ask about staying in the current school, transportation, free school meals, and how to proceed if records are missing.',
     ],
     usefulDocuments: {
@@ -233,7 +259,67 @@ export const ACTION_CARDS: ActionCard[] = [
         label: 'Washington State Department of Health birth records',
         url: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
         verificationStatus: 'Verified',
-        lastVerified: today,
+        lastVerified: birthRecordCheckDate,
+        walkthrough: {
+          id: 'wa-doh-birth-record-ordering',
+          title: 'Washington birth certificate ordering process',
+          serviceName: 'Washington State Department of Health Vital Records',
+          officialWebsiteUrl: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
+          status: 'Verified',
+          lastCapturedAt: birthRecordCheckDate,
+          checkedOn: birthRecordCheckDate,
+          mayBeOutdated: false,
+          aiSupportNotes: [
+            'The public Department of Health page confirms the official product categories, eligibility, required information, and fee starting point.',
+            'The public VitalChek landing page is the public entry point for online ordering but the actual form requires personal information, identity validation, and payment.',
+            'The restricted identity-check and payment screens were not visited because they require real personal information and access controls.',
+          ],
+          summary:
+            'The public process starts on the Washington Department of Health (DOH) birth record page and then routes users to a public VitalChek ordering entry page. The actual application, identity checks, and payment remain restricted and were not explored with real data.',
+          steps: [
+            {
+              id: 'doh-birth-record-overview',
+              heading: 'Confirm the official service and public requirements',
+              instruction:
+                'Open the Washington Department of Health birth record page and confirm the record products, who qualifies, and the required information before ordering.',
+              screenshotAlt: 'Washington State Department of Health birth-record page showing the official record products and who qualifies.',
+              screenshotUrl: '/wa-doh-birth-record-landing.png',
+              sourceUrl: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
+              verificationStatus: 'confirmed',
+              annotations: [
+                { kind: 'highlight', label: 'Highlight the main eligibility and information requirements section.' },
+                { kind: 'arrow', label: 'Point to the public “Who Qualifies?” and “What Do I Need to Provide?” sections.' },
+              ],
+            },
+            {
+              id: 'vitalchek-public-entry',
+              heading: 'Open the public order entry page',
+              instruction:
+                'Use the public VitalChek ordering landing page to confirm that the state partners with an online ordering service for Washington birth certificates. Do not enter personal information beyond public browsing.',
+              screenshotAlt: 'Public VitalChek landing page showing online order entry for vital records.',
+              screenshotUrl: '/vitalchek-public-homepage.png',
+              sourceUrl: 'https://www.vitalchek.com/',
+              verificationStatus: 'confirmed',
+              annotations: [
+                { kind: 'highlight', label: 'Highlight the public “Order Certificate” entry area and the birth certificate options.' },
+                { kind: 'arrow', label: 'Point to the publicly visible order flow, not the restricted form fields that require personal information.' },
+              ],
+            },
+            {
+              id: 'restricted-order-form',
+              heading: 'Prepare for the restricted application step',
+              instruction:
+                'The DOH page says the order requires submitting the application, identity documentation, proof of qualifying relationship, and payment. That part was not safely explored because it requires real personal information and access controls.',
+              screenshotAlt: 'No screenshot captured because the actual identity, relationship, and payment pages are restricted and require personal information.',
+              sourceUrl: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
+              verificationStatus: 'partially explored',
+              annotations: [
+                { kind: 'highlight', label: 'Note that the public page lists the required information, but the actual form and payment screens remain restricted.' },
+                { kind: 'arrow', label: 'Mark the remaining steps as needing verified data and authentication before they can be confirmed.' },
+              ],
+            },
+          ],
+        },
       },
     ],
   },
@@ -268,6 +354,42 @@ export const ACTION_CARDS: ActionCard[] = [
       {
         label: 'Social Security Administration phone',
         phone: '800-772-1213',
+        verificationStatus: 'Verified',
+        lastVerified: today,
+      },
+    ],
+  },
+  {
+    id: 'immigration-support',
+    title: 'Get help with immigration-related paperwork and referrals',
+    category: 'next',
+    whyThisMatters:
+      'Immigration-related paperwork and service matching can be time-sensitive, and the right follow-up depends on whether you need document help, eligibility questions, or referrals to trusted services.',
+    steps: [
+      'Start by asking whether you need help with forms, identification, family-based paperwork, or referrals to an immigration-aware service.',
+      'Use a trusted legal aid or community-organizing service to understand what documents may be required and what alternatives may be accepted.',
+      'Write down the office name, phone number, and next deadline so you can follow up without losing track of the process.',
+    ],
+    usefulDocuments: {
+      required: ['The exact papers needed depend on the immigration question and the service provider.'],
+      alternativesToConfirm: ['Ask which documents can be submitted or summarized if original records are missing or incomplete.'],
+      helpful: ['Any letters, notices, prior applications, or family documents that may explain the issue.'],
+      unverified: ['Do not rely on online forms alone before a trusted provider confirms the right next steps.'],
+    },
+    missingDocsPlan:
+      'Call or email an immigration-aware service and ask exactly which records they need from you before you submit anything.',
+    endGoal:
+      'End goal: identify the correct service or legal aid pathway and get a clear next step for your paperwork.',
+    resources: [
+      {
+        label: 'Washington Immigration Resource Center',
+        url: 'https://www.washingtonimmigration.org/',
+        verificationStatus: 'Verified',
+        lastVerified: today,
+      },
+      {
+        label: 'Northwest Immigrant Rights Project',
+        url: 'https://www.nwirp.org/',
         verificationStatus: 'Verified',
         lastVerified: today,
       },
