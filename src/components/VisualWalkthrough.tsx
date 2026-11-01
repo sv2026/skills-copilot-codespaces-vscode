@@ -8,8 +8,11 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
   return (
     <section className="walkthrough" aria-label={`${walkthrough.title} walkthrough`}>
       <h5>{walkthrough.title}</h5>
+      <p className="walkthrough-summary">
+        <strong>User goal:</strong> {walkthrough.userGoal}
+      </p>
       {walkthrough.serviceName && <p>Service: {walkthrough.serviceName}</p>}
-      {walkthrough.summary && <p className="walkthrough-summary">{walkthrough.summary}</p>}
+      {walkthrough.summary && <p>{walkthrough.summary}</p>}
       <p>
         Official website:{' '}
         <a href={walkthrough.officialWebsiteUrl} target="_blank" rel="noreferrer">
@@ -34,6 +37,13 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
             <p className="walkthrough-step-status">
               Verification: <strong>{step.verificationStatus}</strong>
             </p>
+            {step.screenshotEvidence && (
+              <p className="walkthrough-step-status">
+                Captured: {step.screenshotEvidence.capturedAt} · Viewport:{' '}
+                {step.screenshotEvidence.viewport.width}x{step.screenshotEvidence.viewport.height} ·
+                Human reviewed: {step.screenshotEvidence.reviewedByHuman ? 'Yes' : 'No'}
+              </p>
+            )}
             <p>{step.instruction}</p>
             {step.sourceUrl && (
               <p>

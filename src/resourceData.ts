@@ -7,6 +7,7 @@ export type ResourceLink = {
   verificationStatus: VerificationStatus
   lastVerified: string
   note?: string
+  requiresWalkthrough?: boolean
   walkthrough?: VisualWalkthrough
 }
 
@@ -24,13 +25,25 @@ export type WalkthroughStep = {
   screenshotAlt: string
   screenshotUrl?: string
   sourceUrl?: string
+  screenshotEvidence?: WalkthroughScreenshotEvidence
   verificationStatus: WalkthroughStepVerificationStatus
   annotations: WalkthroughAnnotation[]
+}
+
+export type WalkthroughScreenshotEvidence = {
+  capturedAt: string
+  sourceUrl: string
+  viewport: {
+    width: number
+    height: number
+  }
+  reviewedByHuman: boolean
 }
 
 export type VisualWalkthrough = {
   id: string
   title: string
+  userGoal: string
   serviceName: string
   officialWebsiteUrl: string
   status: 'Draft' | 'Verified' | 'Needs review'
@@ -62,6 +75,7 @@ export type ActionCard = {
 
 const today = '2026-10-25'
 const birthRecordCheckDate = '2026-10-26'
+const walkthroughCaptureDate = '2026-11-01'
 
 export const ACTION_CARDS: ActionCard[] = [
   {
@@ -122,6 +136,134 @@ export const ACTION_CARDS: ActionCard[] = [
         url: 'https://www.washingtonconnection.org/',
         verificationStatus: 'Verified',
         lastVerified: today,
+        requiresWalkthrough: true,
+        walkthrough: {
+          id: 'wa-connection-basic-food-application',
+          title: 'Washington Connection Basic Food application walkthrough (draft)',
+          userGoal: 'Walk through the public application guidance and Basic Food selection before entering personal information.',
+          serviceName: 'Washington Connection Public Benefits Online',
+          officialWebsiteUrl: 'https://www.washingtonconnection.org/',
+          status: 'Draft',
+          lastCapturedAt: walkthroughCaptureDate,
+          checkedOn: walkthroughCaptureDate,
+          mayBeOutdated: true,
+          outdatedReason:
+            'The official application can change. Review these screenshots against the live website before relying on them.',
+          aiSupportNotes: [
+            'These screenshots were captured from public Washington Connection pages and annotated with visible labels.',
+            'The images are draft evidence, not a claim that the full application was completed or AI-generated.',
+            'The walkthrough stops before names, birthdates, addresses, Social Security numbers, documents, payment, and submission.',
+          ],
+          summary:
+            'This draft covers the public application introduction, the official application guidance page, and the Basic Food selection step. Continue on the official site for personal-information fields and final submission.',
+          steps: [
+            {
+              id: 'wa-connection-application-introduction',
+              heading: 'Read the application introduction',
+              instruction:
+                'Review the information categories the application may request, then use the visible Next control to continue through the public guidance.',
+              screenshotAlt:
+                'Annotated Washington Connection application introduction page showing the preparation list and Next control.',
+              screenshotUrl: '/washington-connection-application-introduction-annotated.png',
+              sourceUrl: 'https://www.washingtonconnection.org/eapplication/home.go?action=Introduction&source=',
+              screenshotEvidence: {
+                capturedAt: walkthroughCaptureDate,
+                sourceUrl: 'https://www.washingtonconnection.org/eapplication/home.go?action=Introduction&source=',
+                viewport: { width: 1440, height: 2200 },
+                reviewedByHuman: false,
+              },
+              verificationStatus: 'confirmed',
+              annotations: [
+                { kind: 'highlight', label: 'The page lists information categories that may be needed during the application.' },
+                { kind: 'arrow', label: 'The visible Next control advances through the application guidance.' },
+              ],
+            },
+            {
+              id: 'wa-connection-about-application',
+              heading: 'Review application timing and requirements',
+              instruction:
+                'Read the visible food and cash processing information, identity guidance, and Social Security number instructions before continuing.',
+              screenshotAlt:
+                'Annotated Washington Connection About this Application page showing timing and identity guidance.',
+              screenshotUrl: '/washington-connection-about-application-annotated.png',
+              sourceUrl: 'https://www.washingtonconnection.org/eapplication/home.go',
+              screenshotEvidence: {
+                capturedAt: walkthroughCaptureDate,
+                sourceUrl: 'https://www.washingtonconnection.org/eapplication/home.go',
+                viewport: { width: 1440, height: 2200 },
+                reviewedByHuman: false,
+              },
+              verificationStatus: 'confirmed',
+              annotations: [
+                { kind: 'highlight', label: 'The page explains how to apply and gives visible food and cash processing timelines.' },
+                { kind: 'arrow', label: 'The identity and Social Security number guidance appears before the data-entry screens.' },
+              ],
+            },
+            {
+              id: 'wa-connection-basic-food-selection',
+              heading: 'Select the benefit need',
+              instruction:
+                'On Your Needs, select Basic Food under Food Assistance if that is the benefit you need, then use Next to continue. Do not copy synthetic test values from this draft.',
+              screenshotAlt:
+                'Annotated Washington Connection Your Needs page showing Basic Food selected under Food Assistance.',
+              screenshotUrl: '/washington-connection-your-needs-basic-food-annotated.png',
+              sourceUrl: 'https://www.washingtonconnection.org/eapplication/yourneeds.go',
+              screenshotEvidence: {
+                capturedAt: walkthroughCaptureDate,
+                sourceUrl: 'https://www.washingtonconnection.org/eapplication/yourneeds.go',
+                viewport: { width: 1440, height: 2200 },
+                reviewedByHuman: false,
+              },
+              verificationStatus: 'confirmed',
+              annotations: [
+                { kind: 'highlight', label: 'Basic Food is visibly listed under Food Assistance.' },
+                { kind: 'arrow', label: 'The visible Next control continues after the relevant benefit selection.' },
+              ],
+            },
+            {
+              id: 'wa-connection-resources',
+              heading: 'Understand what counts as a resource',
+              instruction:
+                'Review the visible examples of resources, such as cash, accounts, investments, property, and life insurance. The site asks about annuities separately.',
+              screenshotAlt:
+                'Annotated Washington Connection Resources page showing examples of assets and the separate annuities note.',
+              screenshotUrl: '/washington-connection-resources-annotated.png',
+              sourceUrl: 'https://www.washingtonconnection.org/',
+              screenshotEvidence: {
+                capturedAt: walkthroughCaptureDate,
+                sourceUrl: 'https://www.washingtonconnection.org/eapplication/resource.go',
+                viewport: { width: 1440, height: 2200 },
+                reviewedByHuman: true,
+              },
+              verificationStatus: 'confirmed',
+              annotations: [
+                { kind: 'highlight', label: 'The page lists the asset categories Washington Connection treats as resources.' },
+                { kind: 'arrow', label: 'The visible note explains that annuities are handled on a separate page.' },
+              ],
+            },
+            {
+              id: 'wa-connection-your-rights',
+              heading: 'Read rights and responsibilities before signing',
+              instruction:
+                'Review the official rights, responsibilities, verification rules, processing timelines, EBT guidance, and the acknowledgment that appears before the final application stage.',
+              screenshotAlt:
+                'Annotated Washington Connection Rights and Responsibilities page for cash and food programs.',
+              screenshotUrl: '/washington-connection-your-rights-annotated.png',
+              sourceUrl: 'https://www.washingtonconnection.org/',
+              screenshotEvidence: {
+                capturedAt: walkthroughCaptureDate,
+                sourceUrl: 'https://www.washingtonconnection.org/eapplication/yourrights.go',
+                viewport: { width: 1440, height: 2200 },
+                reviewedByHuman: true,
+              },
+              verificationStatus: 'confirmed',
+              annotations: [
+                { kind: 'highlight', label: 'Review the responsibilities, verification rules, timelines, and EBT guidance.' },
+                { kind: 'arrow', label: 'The acknowledgment and Next control mark the transition toward signing and submission.' },
+              ],
+            },
+          ],
+        },
       },
       {
         label: 'Washington DSHS Basic Food',
@@ -260,9 +402,11 @@ export const ACTION_CARDS: ActionCard[] = [
         url: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
         verificationStatus: 'Verified',
         lastVerified: birthRecordCheckDate,
+        requiresWalkthrough: true,
         walkthrough: {
           id: 'wa-doh-birth-record-ordering',
           title: 'Washington birth certificate ordering process',
+          userGoal: 'Understand the public requirements and entry point before ordering a Washington birth certificate.',
           serviceName: 'Washington State Department of Health Vital Records',
           officialWebsiteUrl: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
           status: 'Verified',

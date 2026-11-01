@@ -302,7 +302,7 @@ function App() {
                       )}
                       <p className="resource-meta">Last verified: {resource.lastVerified}</p>
                       {resource.note && <p className="resource-note">{resource.note}</p>}
-                      {resource.walkthrough && (
+                      {resource.requiresWalkthrough && resource.walkthrough && (
                         <details className="summary-panel walkthrough-panel">
                           <summary>View visual walkthrough</summary>
                           <div className="summary-panel-content">
