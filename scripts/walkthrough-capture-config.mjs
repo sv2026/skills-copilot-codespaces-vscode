@@ -13,6 +13,13 @@ export const WALKTHROUGH_CAPTURE_CONFIGS = [
       chooseFinalScreensAfterFullFlowReview: true,
       minFinalScreens: 3,
       maxFinalScreens: 5,
+      annotationPolicy: {
+        overlays: ['arrows', 'boxes'],
+        textLabels: false,
+        numberedMarkers: false,
+        notesPanel: false,
+        avoidContentOverlap: true,
+      },
     },
     safety: {
       publicPagesOnly: true,

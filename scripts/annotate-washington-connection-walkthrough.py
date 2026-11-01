@@ -152,27 +152,14 @@ def annotate(plan):
     image = Image.open(source).convert('RGB')
     draw = ImageDraw.Draw(image)
 
-    banner = (20, 18, image.width - 20, 82)
-    draw.rounded_rectangle(banner, radius=12, fill=(255, 240, 214), outline=(214, 122, 45), width=3)
-    draw.text((42, 28), 'DRAFT - VERIFY AGAINST THE LIVE WEBSITE', fill=(110, 55, 20), font=TITLE_FONT)
 
-    for index, (box, label) in enumerate(plan['regions'], start=1):
+    for box, _label in plan['regions']:
         x1, y1, x2, y2 = box
         draw.rounded_rectangle((x1, y1, x2, y2), radius=8, outline=(230, 82, 24), width=4)
-        cx, cy = x1 + 22, y1 + 22
-        draw.ellipse((cx - 16, cy - 16, cx + 16, cy + 16), fill=(230, 82, 24), outline=(50, 35, 25), width=2)
-        draw.text((cx - 6, cy - 10), str(index), fill='white', font=LABEL_FONT)
-        draw.text((x1 + 44, y1 + 4), label, fill=(35, 35, 35), font=LABEL_FONT)
-        draw_arrow(draw, (cx, cy + 18), (x1 + 80, y1 + 45))
+        arrow_start = (max(20, x1 - 70), max(90, y1 - 24))
+        arrow_end = (x1 + 8, y1 + 8)
+        draw_arrow(draw, arrow_start, arrow_end)
 
-    notes_height = 180
-    notes_top = image.height - notes_height - 24
-    notes_box = (36, notes_top, image.width - 36, image.height - 24)
-    draw.rounded_rectangle(notes_box, radius=10, fill=(248, 248, 248), outline=(190, 190, 190), width=2)
-    draw.text((54, notes_top + 14), 'Draft walkthrough notes', fill=(35, 35, 35), font=LABEL_FONT)
-    for index, note in enumerate(plan['notes']):
-        draw.text((54, notes_top + 46 + index * 27), note, fill=(45, 45, 45), font=NOTE_FONT)
-    draw.text((54, image.height - 48), 'Captured from the public site on ' + CAPTURED_AT + '; verify against the live website.', fill=(90, 90, 90), font=NOTE_FONT)
 
     image.save(output)
     print(f'Created {output} ({image.width}x{image.height}, {output.stat().st_size} bytes)')

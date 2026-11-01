@@ -62,13 +62,6 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
                 </figcaption>
               )}
             </figure>
-            <ul>
-              {step.annotations.map((annotation) => (
-                <li key={`${step.id}-${annotation.kind}-${annotation.label}`}>
-                  {annotation.kind === 'arrow' ? 'Arrow' : 'Highlight'}: {annotation.label}
-                </li>
-              ))}
-            </ul>
           </li>
         ))}
       </ol>
