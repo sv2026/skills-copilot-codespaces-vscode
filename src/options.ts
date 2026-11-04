@@ -4,11 +4,16 @@ export const OPT = {
     food: 'Food',
     cash: 'Cash for basic expenses',
     docs: 'Replacing ID or other documents',
-    school: 'Keeping my children in school',
+    kids: 'Care for my children',
     immigration: 'Immigration paperwork or legal help',
     unsure: "I'm not sure where to start",
   },
   children: { yes: 'Yes', no: 'No' },
+  kids: {
+    school: 'School',
+    docs: 'Their documents (birth certificate, Social Security card)',
+    unsure: 'Not sure yet',
+  },
   urgency: {
     tonight: 'Tonight',
     days: 'Within the next few days',

@@ -497,6 +497,9 @@ export const buildCards = (p: Profile): ActionCard[] => {
     if (!p.hasDoc('ssn')) {
       add(ssnCard(p, false))
     }
+  }
+
+  if (p.docs || p.kidsDocs) {
     if (p.children && !p.hasDoc('kidsBirth')) {
       add(birthCard(p, true))
     }

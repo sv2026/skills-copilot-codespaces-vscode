@@ -12,8 +12,12 @@ describe('questions', () => {
     expect(qIds({})).toEqual(['needs'])
   })
 
-  it('skips the children question when school is selected', () => {
-    expect(qIds({ needs: [OPT.needs.school] })).not.toContain('children')
+  it('asks about the children needs, not a yes/no, when care for children is selected', () => {
+    const ask = qIds({ needs: [OPT.needs.kids] })
+    expect(ask).toContain('kidsNeeds')
+    expect(ask).not.toContain('children')
+    expect(ask).not.toContain('schoolNeeds')
+    expect(qIds({ needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.school] })).toContain('schoolNeeds')
   })
 
   it('shows only relevant follow-ups', () => {
@@ -128,7 +132,8 @@ describe('personas', () => {
 
   it('school need tailors steps to the chosen school needs', () => {
     const a = {
-      needs: [OPT.needs.school],
+      needs: [OPT.needs.kids],
+      kidsNeeds: [OPT.kids.school],
       docs: [OPT.docs.kidsBirth, OPT.docs.kidsSchool],
       schoolNeeds: [OPT.school.rides, OPT.school.meals],
     }
@@ -140,7 +145,8 @@ describe('personas', () => {
 
   it('school plus housing crisis routes to the liaison with immediate enrollment', () => {
     const a = {
-      needs: [OPT.needs.school, OPT.needs.shelter],
+      needs: [OPT.needs.kids, OPT.needs.shelter],
+      kidsNeeds: [OPT.kids.school],
       urgency: [OPT.urgency.days],
       schoolNeeds: [OPT.school.enroll],
     }

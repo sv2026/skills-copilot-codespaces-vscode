@@ -55,6 +55,13 @@ export const QUESTIONS: Question[] = [
     options: values(OPT.children),
   },
   {
+    id: 'kidsNeeds',
+    prompt: 'What do your children need help with?',
+    helperText: 'Pick all that apply.',
+    multiSelect: true,
+    options: values(OPT.kids),
+  },
+  {
     id: 'county',
     prompt: 'Which county are you in?',
     helperText: 'This version covers Western Washington.',
@@ -119,11 +126,16 @@ export const buildVisibleQuestions = (answers: AnswerMap): Question[] => {
     return visible
   }
 
-  const wantsSchool = has(OPT.needs.school)
-  const hasChildren = wantsSchool || answers.children?.[0] === OPT.children.yes
+  const wantsKids = has(OPT.needs.kids)
+  const kidsNeeds = answers.kidsNeeds ?? []
+  const wantsSchool = wantsKids && kidsNeeds.includes(OPT.kids.school)
+  const kidsDocs = wantsKids && kidsNeeds.includes(OPT.kids.docs)
+  const hasChildren = wantsKids || answers.children?.[0] === OPT.children.yes
   const wantsShelter = has(OPT.needs.shelter) || has(OPT.needs.unsure)
 
-  if (!wantsSchool) {
+  if (wantsKids) {
+    visible.push(question('kidsNeeds'))
+  } else {
     visible.push(question('children'))
   }
 
@@ -139,7 +151,7 @@ export const buildVisibleQuestions = (answers: AnswerMap): Question[] => {
     visible.push(question('benefits'))
   }
 
-  if (has(OPT.needs.docs) || wantsSchool) {
+  if (has(OPT.needs.docs) || kidsDocs || wantsSchool) {
     const docs = question('docs')
     const childDocs: string[] = [OPT.docs.kidsBirth, OPT.docs.kidsSsn, OPT.docs.kidsSchool]
     visible.push({
@@ -148,7 +160,10 @@ export const buildVisibleQuestions = (answers: AnswerMap): Question[] => {
         if (childDocs.includes(option)) {
           return hasChildren
         }
-        return option !== OPT.docs.immigration || has(OPT.needs.immigration)
+        if (option === OPT.docs.immigration) {
+          return has(OPT.needs.immigration)
+        }
+        return has(OPT.needs.docs)
       }),
     })
   }
@@ -169,6 +184,7 @@ export type Profile = {
   food: boolean
   cash: boolean
   docs: boolean
+  kidsDocs: boolean
   school: boolean
   immigration: boolean
   unsure: boolean
@@ -192,17 +208,19 @@ export const toProfile = (answers: AnswerMap): Profile => {
   const needs = answers.needs ?? []
   const owned = answers.docs ?? []
   const benefits = answers.benefits ?? []
-  const school = needs.includes(OPT.needs.school)
+  const kids = needs.includes(OPT.needs.kids)
+  const kidsNeeds = kids ? (answers.kidsNeeds ?? []) : []
 
   return {
     shelter: needs.includes(OPT.needs.shelter),
     food: needs.includes(OPT.needs.food),
     cash: needs.includes(OPT.needs.cash),
     docs: needs.includes(OPT.needs.docs),
-    school,
+    kidsDocs: kidsNeeds.includes(OPT.kids.docs),
+    school: kidsNeeds.includes(OPT.kids.school),
     immigration: needs.includes(OPT.needs.immigration),
     unsure: needs.includes(OPT.needs.unsure),
-    children: school || answers.children?.[0] === OPT.children.yes,
+    children: kids || answers.children?.[0] === OPT.children.yes,
     county: COUNTY_OPTIONS.includes(answers.county?.[0] ?? '') ? answers.county?.[0] : undefined,
     urgency: keyOf(OPT.urgency, answers.urgency?.[0]),
     contact: keyOf(OPT.contact, answers.contact?.[0]),
