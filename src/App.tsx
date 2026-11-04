@@ -7,6 +7,7 @@ import {
   getCardsForAnswers,
   type AnswerMap,
 } from './recommendationLogic'
+import { OPT } from './options'
 
 const DOCUMENT_BOXES = [
   { key: 'required', title: 'Bring or have ready', className: 'required' },
@@ -16,8 +17,6 @@ const DOCUMENT_BOXES = [
 ] as const
 
 const PLAN_TITLE = 'Your next steps'
-const RESULTS_INTRO = 'Start at the top. You can begin without every document; ask what can wait.'
-
 function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<AnswerMap>({})
@@ -30,13 +29,15 @@ function App() {
   const visibleQuestions = useMemo(() => buildVisibleQuestions(answers), [answers])
   const safeQuestionIndex = Math.min(currentQuestionIndex, Math.max(visibleQuestions.length - 1, 0))
   const question = visibleQuestions[safeQuestionIndex]
-  const selectedOptions = answers[question?.id] ?? []
+  const selectedOptions = (answers[question?.id] ?? []).filter((option) => question?.options?.includes(option))
 
   // Answers to questions that are no longer shown must not influence the plan.
   const activeAnswers = useMemo(() => {
-    const visibleIds = new Set(visibleQuestions.map((item) => item.id))
     return Object.fromEntries(
-      Object.entries(answers).filter(([id]) => visibleIds.has(id)),
+      visibleQuestions.map((item) => [
+        item.id,
+        (answers[item.id] ?? []).filter((option) => item.options?.includes(option)),
+      ]),
     ) as AnswerMap
   }, [answers, visibleQuestions])
 
@@ -50,10 +51,16 @@ function App() {
 
   const onToggleOption = (option: string) => {
     setAnswers((previous) => {
-      const previousForQuestion = previous[question.id] ?? []
+      const previousForQuestion = (previous[question.id] ?? []).filter((item) => question.options?.includes(item))
 
       if (!question.multiSelect) {
         return { ...previous, [question.id]: [option] }
+      }
+
+      const exclusive = question.id === 'docs' ? OPT.docs.none
+        : question.id === 'benefits' ? OPT.benefits.none : undefined
+      if (option === exclusive) {
+        return { ...previous, [question.id]: previousForQuestion.includes(option) ? [] : [option] }
       }
 
       if (previousForQuestion.includes(option)) {
@@ -63,7 +70,7 @@ function App() {
         }
       }
 
-      return { ...previous, [question.id]: [...previousForQuestion, option] }
+      return { ...previous, [question.id]: [...previousForQuestion.filter((item) => item !== exclusive), option] }
     })
   }
 
@@ -99,17 +106,12 @@ function App() {
   }
 
   const canContinue = selectedOptions.length > 0
-  const progress = visibleQuestions.length
-    ? Math.round(((safeQuestionIndex + 1) / visibleQuestions.length) * 100)
-    : 0
-
   return (
     <div className="app-shell">
       <header className="top-bar">
         <h1>Washington Support Steps</h1>
         <p>
-          A calm, simple starting point for finding local support with housing, food, documents,
-          school needs, and other next steps.
+          Housing, food, documents, school and immigration resources in Western Washington.
         </p>
         <div className="safety-actions">
           <button
@@ -124,7 +126,7 @@ function App() {
             className="link-button"
             onClick={() => setShowSafetyDetails((value) => !value)}
           >
-            Privacy and safety explanation
+            Privacy &amp; safety
           </button>
         </div>
         {showSafetyDetails && (
@@ -137,6 +139,7 @@ function App() {
               This tool does not store your answers in accounts, analytics, cookies, or local
               storage.
             </p>
+            <p>Other websites may ask for personal information and have their own privacy policies.</p>
           </div>
         )}
       </header>
@@ -146,20 +149,7 @@ function App() {
           {question && (
             <>
               <div className="progress-row">
-                <p>
-                  Question {safeQuestionIndex + 1} of {visibleQuestions.length}
-                </p>
-                <p>{progress}%</p>
-              </div>
-              <div
-                className="progress-track"
-                role="progressbar"
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={progress}
-                aria-label="Question progress"
-              >
-                <span style={{ width: `${progress}%` }}></span>
+                <p>Question {safeQuestionIndex + 1}</p>
               </div>
               <h2 ref={headingRef} tabIndex={-1}>{question.prompt}</h2>
               {question.helperText && <p className="helper-text">{question.helperText}</p>}
@@ -168,18 +158,18 @@ function App() {
                     const isSelected = selectedOptions.includes(option)
                     return (
                       <li key={option}>
-                        <button
-                          type="button"
+                        <label
                           className={`option-button${isSelected ? ' selected' : ''}`}
-                          role={question.multiSelect ? 'checkbox' : 'radio'}
-                          aria-checked={isSelected}
-                          onClick={() => onToggleOption(option)}
                         >
-                          <span className="check" aria-hidden="true">
-                            {isSelected ? '✓' : question.multiSelect ? '○' : '◯'}
-                          </span>
+                          <input
+                            className="check"
+                            type={question.multiSelect ? 'checkbox' : 'radio'}
+                            name={question.id}
+                            checked={isSelected}
+                            onChange={() => onToggleOption(option)}
+                          />
                           <span>{option}</span>
-                        </button>
+                        </label>
                       </li>
                     )
                   })}
@@ -205,7 +195,7 @@ function App() {
       ) : (
         <main className="results-shell">
           <h2 ref={headingRef} tabIndex={-1}>{PLAN_TITLE}</h2>
-          <p className="intro">{RESULTS_INTRO}</p>
+          <p className="intro">Use a contact method only if it is safe for you.</p>
 
           {!activeCard && (
             <p className="notice-inline">
@@ -229,7 +219,7 @@ function App() {
                 </p>
               )}
 
-              <h4>What to do next</h4>
+              <h4>Steps</h4>
               <ol className="action-steps">
                 {activeCard.steps.map((step) => (
                   <li key={step}>{step}</li>
@@ -238,7 +228,7 @@ function App() {
 
               {Object.values(activeCard.usefulDocuments).some((list) => list.length > 0) && (
                 <>
-                  <h4>Before you go</h4>
+                  <h4>Good to know</h4>
                   <div className="document-grid">
                     {DOCUMENT_BOXES.map(({ key, title, className }) =>
                       activeCard.usefulDocuments[key].length > 0 ? (
@@ -281,14 +271,15 @@ function App() {
                           {resource.verificationStatus}
                         </span>
                       </div>
-                      {resource.url ? (
+                      {resource.url && (
                         <a href={resource.url} target="_blank" rel="noreferrer">
-                          Open official resource
+                          Open {resource.label} <span aria-hidden="true">↗</span>
                         </a>
-                      ) : (
-                        <p className="resource-phone">{resource.phone}</p>
                       )}
-                      <p className="resource-meta">Last verified: {resource.lastVerified}</p>
+                      {resource.phone && <p className="resource-phone">{resource.phone}</p>}
+                      <p className="resource-meta">
+                        {resource.verificationStatus === 'Verified' ? 'Last verified' : 'Source checked'}: {resource.lastVerified}
+                      </p>
                       {resource.note && <p className="resource-note">{resource.note}</p>}
                       {resource.requiresWalkthrough && resource.walkthrough && (
                         <details className="summary-panel walkthrough-panel">
@@ -302,10 +293,7 @@ function App() {
                   ))}
                 </ul>
               ) : (
-                <p className="notice-inline">
-                  No single official website applies to this follow-up step. Ask current providers
-                  for trusted referral pathways.
-                </p>
+                null
               )}
             </section>
           )}
@@ -330,33 +318,18 @@ function App() {
             </button>
           </div>
 
-          <details className="summary-panel overview-panel" open>
-            <summary>View section overview</summary>
+          <details className="summary-panel overview-panel">
+            <summary>See all steps</summary>
             <div className="summary-panel-content">
               <section className="section-overview">
-                <h3>Immediate</h3>
                 <ul>
-                  {planCards
-                    .filter((card) => card.category === 'immediate')
-                    .map((card) => (
-                      <li key={card.id}>{card.title}</li>
-                    ))}
-                </ul>
-                <h3>Next</h3>
-                <ul>
-                  {planCards
-                    .filter((card) => card.category === 'next')
-                    .map((card) => (
-                      <li key={card.id}>{card.title}</li>
-                    ))}
-                </ul>
-                <h3>Later</h3>
-                <ul>
-                  {planCards
-                    .filter((card) => card.category === 'later')
-                    .map((card) => (
-                      <li key={card.id}>{card.title}</li>
-                    ))}
+                  {planCards.map((card, index) => (
+                    <li key={card.id}>
+                      <button type="button" className="overview-link" onClick={() => setCurrentSlideIndex(index)}>
+                        {index + 1}. {card.title}
+                      </button>
+                    </li>
+                  ))}
                 </ul>
               </section>
             </div>
@@ -370,7 +343,7 @@ function App() {
                   {visibleQuestions.map((item) => (
                     <li key={item.id}>
                       <p>{item.prompt}</p>
-                      <p>{(answers[item.id]?.length ? answers[item.id] : ['No answer recorded']).join(', ')}</p>
+                      <p>{(activeAnswers[item.id]?.length ? activeAnswers[item.id] : ['No answer recorded']).join(', ')}</p>
                     </li>
                   ))}
                 </ul>
@@ -401,8 +374,8 @@ function App() {
           </div>
 
           <p className="disclaimer">
-            Requirements differ by program and may change. Always confirm current rules with the
-            agency before submitting documents or paying fees.
+            Resources and requirements can change. Confirm details before sharing information or paying fees.
+            Some visual guides are still being reviewed.
           </p>
           <a
             href="https://github.com/sv2026/skills-copilot-codespaces-vscode/issues/new?title=Outdated%20resource%20information&body=Please%20describe%20which%20resource%20or%20requirement%20needs%20review.%20Do%20not%20include%20personal%20information."

@@ -49,12 +49,6 @@ export const QUESTIONS: Question[] = [
     options: values(OPT.needs),
   },
   {
-    id: 'children',
-    prompt: 'Do children need to be included in your plan?',
-    multiSelect: false,
-    options: values(OPT.children),
-  },
-  {
     id: 'kidsNeeds',
     prompt: 'What do your children need help with?',
     helperText: 'Pick all that apply.',
@@ -75,12 +69,6 @@ export const QUESTIONS: Question[] = [
     options: values(OPT.urgency),
   },
   {
-    id: 'contact',
-    prompt: 'How can you safely contact services?',
-    multiSelect: false,
-    options: values(OPT.contact),
-  },
-  {
     id: 'transport',
     prompt: 'Can you get to an office or shelter in person?',
     multiSelect: false,
@@ -92,6 +80,12 @@ export const QUESTIONS: Question[] = [
     helperText: 'Pick all that apply.',
     multiSelect: true,
     options: values(OPT.benefits),
+  },
+  {
+    id: 'pendingBenefits',
+    prompt: 'What did you apply for?',
+    multiSelect: false,
+    options: values(OPT.pending),
   },
   {
     id: 'docs',
@@ -130,13 +124,10 @@ export const buildVisibleQuestions = (answers: AnswerMap): Question[] => {
   const kidsNeeds = answers.kidsNeeds ?? []
   const wantsSchool = wantsKids && kidsNeeds.includes(OPT.kids.school)
   const kidsDocs = wantsKids && kidsNeeds.includes(OPT.kids.docs)
-  const hasChildren = wantsKids || answers.children?.[0] === OPT.children.yes
-  const wantsShelter = has(OPT.needs.shelter) || has(OPT.needs.unsure)
+  const wantsShelter = has(OPT.needs.shelter)
 
   if (wantsKids) {
     visible.push(question('kidsNeeds'))
-  } else {
-    visible.push(question('children'))
   }
 
   visible.push(question('county'))
@@ -145,21 +136,26 @@ export const buildVisibleQuestions = (answers: AnswerMap): Question[] => {
     visible.push(question('urgency'))
   }
 
-  visible.push(question('contact'), question('transport'))
+  visible.push(question('transport'))
 
-  if (has(OPT.needs.food) || has(OPT.needs.cash) || has(OPT.needs.unsure)) {
+  if (has(OPT.needs.food) || has(OPT.needs.cash)) {
     visible.push(question('benefits'))
+    if (answers.benefits?.includes(OPT.benefits.waiting)) {
+      visible.push(question('pendingBenefits'))
+    }
   }
 
   if (has(OPT.needs.docs) || kidsDocs || wantsSchool) {
     const docs = question('docs')
-    const childDocs: string[] = [OPT.docs.kidsBirth, OPT.docs.kidsSsn, OPT.docs.kidsSchool]
     visible.push({
       ...docs,
       options: docs.options?.filter((option) => {
-        if (childDocs.includes(option)) {
-          return hasChildren
+        if (option === OPT.docs.none) {
+          return true
         }
+        if (option === OPT.docs.kidsBirth) return kidsDocs || wantsSchool
+        if (option === OPT.docs.kidsSsn) return kidsDocs
+        if (option === OPT.docs.kidsSchool) return wantsSchool
         if (option === OPT.docs.immigration) {
           return has(OPT.needs.immigration)
         }
@@ -191,12 +187,15 @@ export type Profile = {
   children: boolean
   county?: string
   urgency?: 'tonight' | 'days' | 'weeks' | 'later'
-  contact?: 'phone' | 'online' | 'inPerson' | 'unsure'
   transport?: 'ok' | 'help' | 'no'
   getsFood: boolean
   getsCash: boolean
   waiting: boolean
+  pendingBenefits?: keyof typeof OPT.pending
+  kidsUnsure: boolean
+  docsAnswered: boolean
   hasDoc: (doc: keyof typeof OPT.docs) => boolean
+  docAnswered: (doc: keyof typeof OPT.docs) => boolean
   schoolNeeds: string[]
   immigrationHelp?: keyof typeof OPT.immigration
 }
@@ -220,23 +219,37 @@ export const toProfile = (answers: AnswerMap): Profile => {
     school: kidsNeeds.includes(OPT.kids.school),
     immigration: needs.includes(OPT.needs.immigration),
     unsure: needs.includes(OPT.needs.unsure),
-    children: kids || answers.children?.[0] === OPT.children.yes,
+    children: kids,
     county: COUNTY_OPTIONS.includes(answers.county?.[0] ?? '') ? answers.county?.[0] : undefined,
     urgency: keyOf(OPT.urgency, answers.urgency?.[0]),
-    contact: keyOf(OPT.contact, answers.contact?.[0]),
     transport: keyOf(OPT.transport, answers.transport?.[0]),
     getsFood: benefits.includes(OPT.benefits.food),
     getsCash: benefits.includes(OPT.benefits.cash),
     waiting: benefits.includes(OPT.benefits.waiting),
+    pendingBenefits: benefits.includes(OPT.benefits.waiting)
+      ? keyOf(OPT.pending, answers.pendingBenefits?.[0])
+      : undefined,
+    kidsUnsure: kidsNeeds.includes(OPT.kids.unsure),
+    docsAnswered: owned.length > 0,
     hasDoc: (doc) => owned.includes(OPT.docs[doc]),
+    docAnswered: (doc) => {
+      const docs = buildVisibleQuestions(answers).find((item) => item.id === 'docs')
+      return Boolean(owned.length && docs?.options?.includes(OPT.docs[doc]))
+    },
     schoolNeeds: answers.schoolNeeds ?? [],
     immigrationHelp: keyOf(OPT.immigration, answers.immigrationHelp?.[0]),
   }
 }
 
 export const getCardsForAnswers = (answers: AnswerMap): ActionCard[] => {
-  if ((answers.needs ?? []).length === 0) {
+  const activeAnswers: AnswerMap = Object.fromEntries(
+    buildVisibleQuestions(answers).map((item) => [
+      item.id,
+      (answers[item.id] ?? []).filter((answer) => item.options?.includes(answer)),
+    ]),
+  )
+  if ((activeAnswers.needs ?? []).length === 0) {
     return []
   }
-  return buildCards(toProfile(answers))
+  return buildCards(toProfile(activeAnswers))
 }

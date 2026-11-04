@@ -8,7 +8,6 @@ export const OPT = {
     immigration: 'Immigration paperwork or legal help',
     unsure: "I'm not sure where to start",
   },
-  children: { yes: 'Yes', no: 'No' },
   kids: {
     school: 'School',
     docs: 'Their documents (birth certificate, Social Security card)',
@@ -20,12 +19,6 @@ export const OPT = {
     weeks: 'Within a few weeks',
     later: 'Not now; I have a place for the time being',
   },
-  contact: {
-    phone: 'Phone calls are safe',
-    online: 'Online only; phone is not safe',
-    inPerson: 'In person only',
-    unsure: 'Not sure',
-  },
   transport: {
     ok: 'Yes',
     help: 'Only with transportation help',
@@ -36,6 +29,12 @@ export const OPT = {
     cash: 'I get cash assistance',
     waiting: 'I applied and am waiting',
     none: 'None of these',
+  },
+  pending: {
+    food: 'Food assistance',
+    cash: 'Cash assistance',
+    both: 'Both food and cash assistance',
+    unsure: "I'm not sure",
   },
   docs: {
     photoId: 'My photo ID',

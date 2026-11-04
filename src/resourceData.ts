@@ -116,6 +116,7 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
   'Whatcom County': {
     label: 'Whatcom County coordinated entry access',
     phone: '360-734-5121',
+    url: 'https://www.whatcomcounty.us/4741/Emergency-Shelters-Coordinated-Entry-Acc',
     note: 'Listed on whatcomcounty.us.',
   },
   'Skagit County': {
