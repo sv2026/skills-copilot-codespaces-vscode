@@ -73,498 +73,117 @@ export type ActionCard = {
   resources: ResourceLink[]
 }
 
-const today = '2026-10-25'
-const birthRecordCheckDate = '2026-10-26'
-const walkthroughCaptureDate = '2026-11-01'
+export type CountyEntry = {
+  label: string
+  phone?: string
+  url?: string
+  note: string
+}
 
-export const ACTION_CARDS: ActionCard[] = [
-  {
-    id: 'shelter-intake',
-    title: 'Contact family emergency shelter intake',
-    category: 'immediate',
-    whyThisMatters:
-      'A shelter intake team can help with urgent safe placement, transportation options, and referrals for longer-term housing support.',
-    steps: [
-      'Call 206-245-1026 and say you are a domestic violence survivor who needs safe placement. Mention how soon you need it and whether any children are with you.',
-      'Ask specifically about emergency family shelter openings, safe placement, transportation, and longer-term housing referrals.',
-      'Write down the person you spoke with, callback instructions, and next steps in case no bed is available right away.',
-    ],
-    usefulDocuments: {
-      required: ['Requirements vary by provider and were not fully verified for this prototype.'],
-      alternativesToConfirm: ['Ask whether a referral letter, shelter note, or verbal screening can be used when documents are missing.'],
-      helpful: ['Any photo of existing records, school paperwork, or benefit letters may help but may not be required.'],
-      unverified: ['Exact intake eligibility and placement rules need manual verification before launch.'],
-    },
-    missingDocsPlan:
-      'If you do not have documents, still call. Ask what can be started now and what can be submitted later.',
-    endGoal:
-      'End goal: secure a safe short-term placement plan and clear next contacts for ongoing housing support.',
-    resources: [
-      {
-        label: 'King County emergency family shelter intake',
-        phone: '206-245-1026',
-        verificationStatus: 'Needs review',
-        lastVerified: today,
-        note: 'Phone number is listed for prototype use and must be manually verified before public launch.',
-      },
-    ],
+const countyChecked = '2026-11-03'
+export const COUNTY_CHECKED_DATE = countyChecked
+
+// Housing access points found on official county or lead-agency pages; every entry still needs human review.
+export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
+  'King County': {
+    label: 'King County Regional Access Points',
+    url: 'https://kcrha.org/find-services/for-people-experiencing-homelessness/',
+    note: 'Listed on kcrha.org.',
   },
-  {
-    id: 'dshs-food-assistance',
-    title: 'Contact Washington DSHS about food assistance',
-    category: 'immediate',
-    whyThisMatters:
-      'Food assistance can help cover groceries while you work through other paperwork or school-related needs.',
-    steps: [
-      'Open Washington Connection and start the Basic Food application if you need help with groceries right now.',
-      'Tell DSHS whether you need help with groceries only or if you are also applying for other supports.',
-      'Ask what documents are required now and what can be submitted later if you do not have them on hand.',
-    ],
-    usefulDocuments: {
-      required: ['Program requirements vary; ask DSHS for the exact list tied to your application.'],
-      alternativesToConfirm: ['Ask whether temporary or alternative verification can be used while records are missing.'],
-      helpful: ['Any prior benefit letters, shelter notes, or school-related paperwork.'],
-      unverified: ['Do not assume a decision before DSHS confirms the information required.'],
-    },
-    missingDocsPlan:
-      'Ask DSHS what information they can take now and what can be completed later without delaying the food application.',
-    endGoal:
-      'End goal: confirm the right food-assistance path and complete the next step without unnecessary delays.',
-    resources: [
-      {
-        label: 'Washington Connection',
-        url: 'https://www.washingtonconnection.org/',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-        requiresWalkthrough: true,
-        walkthrough: {
-          id: 'wa-connection-basic-food-application',
-          title: 'Washington Connection Basic Food application walkthrough (draft)',
-          userGoal: 'Walk through the public application guidance and Basic Food selection before entering personal information.',
-          serviceName: 'Washington Connection Public Benefits Online',
-          officialWebsiteUrl: 'https://www.washingtonconnection.org/',
-          status: 'Draft',
-          lastCapturedAt: walkthroughCaptureDate,
-          checkedOn: walkthroughCaptureDate,
-          mayBeOutdated: true,
-          outdatedReason:
-            'The official application can change. Review these screenshots against the live website before relying on them.',
-          aiSupportNotes: [
-            'These screenshots were captured from public Washington Connection pages and annotated with visible labels.',
-            'The images are draft evidence, not a claim that the full application was completed or AI-generated.',
-            'The walkthrough stops before names, birthdates, addresses, Social Security numbers, documents, payment, and submission.',
-          ],
-          summary:
-            'This draft covers the public application introduction, the official application guidance page, and the Basic Food selection step. Continue on the official site for personal-information fields and final submission.',
-          steps: [
-            {
-              id: 'wa-connection-application-introduction',
-              heading: 'Read the application introduction',
-              instruction:
-                'Review the information categories the application may request, then use the visible Next control to continue through the public guidance.',
-              screenshotAlt:
-                'Annotated Washington Connection application introduction page showing the preparation list and Next control.',
-              screenshotUrl: '/washington-connection-application-introduction-annotated.png',
-              sourceUrl: 'https://www.washingtonconnection.org/eapplication/home.go?action=Introduction&source=',
-              screenshotEvidence: {
-                capturedAt: walkthroughCaptureDate,
-                sourceUrl: 'https://www.washingtonconnection.org/eapplication/home.go?action=Introduction&source=',
-                viewport: { width: 1440, height: 2200 },
-                reviewedByHuman: false,
-              },
-              verificationStatus: 'needs review',
-              annotations: [
-                { kind: 'highlight', label: 'The page lists information categories that may be needed during the application.' },
-                { kind: 'arrow', label: 'The visible Next control advances through the application guidance.' },
-              ],
-            },
-            {
-              id: 'wa-connection-about-application',
-              heading: 'Review application timing and requirements',
-              instruction:
-                'Read the visible food and cash processing information, identity guidance, and Social Security number instructions before continuing.',
-              screenshotAlt:
-                'Annotated Washington Connection About this Application page showing timing and identity guidance.',
-              screenshotUrl: '/washington-connection-about-application-annotated.png',
-              sourceUrl: 'https://www.washingtonconnection.org/eapplication/home.go',
-              screenshotEvidence: {
-                capturedAt: walkthroughCaptureDate,
-                sourceUrl: 'https://www.washingtonconnection.org/eapplication/home.go',
-                viewport: { width: 1440, height: 2200 },
-                reviewedByHuman: false,
-              },
-              verificationStatus: 'needs review',
-              annotations: [
-                { kind: 'highlight', label: 'The page explains how to apply and gives visible food and cash processing timelines.' },
-                { kind: 'arrow', label: 'The identity and Social Security number guidance appears before the data-entry screens.' },
-              ],
-            },
-            {
-              id: 'wa-connection-basic-food-selection',
-              heading: 'Select the benefit need',
-              instruction:
-                'On Your Needs, select Basic Food under Food Assistance if that is the benefit you need, then use Next to continue. Do not copy synthetic test values from this draft.',
-              screenshotAlt:
-                'Annotated Washington Connection Your Needs page showing Basic Food selected under Food Assistance.',
-              screenshotUrl: '/washington-connection-your-needs-basic-food-annotated.png',
-              sourceUrl: 'https://www.washingtonconnection.org/eapplication/yourneeds.go',
-              screenshotEvidence: {
-                capturedAt: walkthroughCaptureDate,
-                sourceUrl: 'https://www.washingtonconnection.org/eapplication/yourneeds.go',
-                viewport: { width: 1440, height: 2200 },
-                reviewedByHuman: false,
-              },
-              verificationStatus: 'needs review',
-              annotations: [
-                { kind: 'highlight', label: 'Basic Food is visibly listed under Food Assistance.' },
-                { kind: 'arrow', label: 'The visible Next control continues after the relevant benefit selection.' },
-              ],
-            },
-            {
-              id: 'wa-connection-resources',
-              heading: 'Understand what counts as a resource',
-              instruction:
-                'Review the visible examples of resources, such as cash, accounts, investments, property, and life insurance. The site asks about annuities separately.',
-              screenshotAlt:
-                'Annotated Washington Connection Resources page showing examples of assets and the separate annuities note.',
-              screenshotUrl: '/washington-connection-resources-annotated.png',
-              sourceUrl: 'https://www.washingtonconnection.org/',
-              screenshotEvidence: {
-                capturedAt: walkthroughCaptureDate,
-                sourceUrl: 'https://www.washingtonconnection.org/eapplication/resource.go',
-                viewport: { width: 1440, height: 2200 },
-                reviewedByHuman: true,
-              },
-              verificationStatus: 'confirmed',
-              annotations: [
-                { kind: 'highlight', label: 'The page lists the asset categories Washington Connection treats as resources.' },
-                { kind: 'arrow', label: 'The visible note explains that annuities are handled on a separate page.' },
-              ],
-            },
-            {
-              id: 'wa-connection-your-rights',
-              heading: 'Read rights and responsibilities before signing',
-              instruction:
-                'Review the official rights, responsibilities, verification rules, processing timelines, EBT guidance, and the acknowledgment that appears before the final application stage.',
-              screenshotAlt:
-                'Annotated Washington Connection Rights and Responsibilities page for cash and food programs.',
-              screenshotUrl: '/washington-connection-your-rights-annotated.png',
-              sourceUrl: 'https://www.washingtonconnection.org/',
-              screenshotEvidence: {
-                capturedAt: walkthroughCaptureDate,
-                sourceUrl: 'https://www.washingtonconnection.org/eapplication/yourrights.go',
-                viewport: { width: 1440, height: 2200 },
-                reviewedByHuman: true,
-              },
-              verificationStatus: 'confirmed',
-              annotations: [
-                { kind: 'highlight', label: 'Review the responsibilities, verification rules, timelines, and EBT guidance.' },
-                { kind: 'arrow', label: 'The acknowledgment and Next control mark the transition toward signing and submission.' },
-              ],
-            },
-          ],
-        },
-      },
-      {
-        label: 'Washington DSHS Basic Food',
-        url: 'https://www.dshs.wa.gov/family-food-and-housing-services/food-assistance/basic-food-benefits',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-    ],
+  'Pierce County': {
+    label: 'Pierce County Access Pierce',
+    url: 'https://www.piercecountywa.gov/4809/Find-Housing-Help',
+    note: 'Listed on piercecountywa.gov.',
   },
-  {
-    id: 'dshs-cash-assistance',
-    title: 'Contact Washington DSHS about cash assistance',
-    category: 'immediate',
-    whyThisMatters:
-      'Cash assistance can help with urgent household expenses when your income is not covering basic needs.',
-    steps: [
-      'Open Washington Connection and begin the cash-assistance application if this is a need you have selected.',
-      'Ask DSHS what documents are required now and which ones can be provided later if your records are incomplete.',
-      'Keep a written checklist of deadlines, case numbers, and next steps so you can follow up clearly.',
-    ],
-    usefulDocuments: {
-      required: ['Program requirements vary; ask DSHS for the exact list tied to your application.'],
-      alternativesToConfirm: ['Ask whether temporary or alternative verification can be used while records are missing.'],
-      helpful: ['Any prior benefit letters, pay stubs, or school or housing paperwork that may help explain your situation.'],
-      unverified: ['Do not assume a final decision before DSHS confirms the information required.'],
-    },
-    missingDocsPlan:
-      'Tell DSHS which records are missing and ask what can be submitted now versus later so your application can move forward.',
-    endGoal:
-      'End goal: clarify the cash-assistance path and complete the next step with a clear list of requirements.',
-    resources: [
-      {
-        label: 'Washington Connection',
-        url: 'https://www.washingtonconnection.org/',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-      {
-        label: 'DSHS Social Security number guidance',
-        url: 'https://www.dshs.wa.gov/social-security-numbers-ssn',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-    ],
+  'Snohomish County': {
+    label: 'Snohomish County coordinated entry (VOA Connect Line)',
+    phone: '360-862-4357',
+    url: 'https://snohomishcountywa.gov/2238/Coordinated-Entry',
+    note: 'Listed on snohomishcountywa.gov.',
   },
-  {
-    id: 'school-support',
-    title: 'Contact your school district about staying in your current school',
-    category: 'next',
-    whyThisMatters:
-      'School stability support can help families keep students in their current school while they work through paperwork, enrollment, or attendance concerns.',
-    steps: [
-      'Contact the school district attendance or enrollment office and explain that you want to keep your child in their current school.',
-      'Ask what records are needed right now and which records can be submitted later.',
-      'Request any transportation, enrollment, or attendance support that may be available without a housing crisis.',
-    ],
-    usefulDocuments: {
-      required: ['School requirements vary by district.'],
-      alternativesToConfirm: ['Ask what can be accepted temporarily while documents are being replaced.'],
-      helpful: ['Current school name, student name, and any existing student ID or school records.'],
-      unverified: ['Specific district procedures may vary and should be confirmed directly.'],
-    },
-    missingDocsPlan:
-      'Ask the school district what can be completed now so the student can stay in school while other records are recovered.',
-    endGoal:
-      'End goal: keep the student attached to their current school and get clear next steps for records or enrollment.',
-    resources: [
-      {
-        label: 'Washington school district enrollment support',
-        url: 'https://www.k12.wa.us/student-success/access-opportunity-education',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-    ],
+  'Kitsap County': {
+    label: 'Kitsap Housing Solutions Center',
+    phone: '360-473-2035',
+    url: 'https://www.kitsap.gov/hs/Pages/HH-Resources.aspx',
+    note: 'Bremerton number listed on kitsap.gov.',
   },
-  {
-    id: 'school-liaison',
-    title: 'Contact the school district support team for housing-related school stability',
-    category: 'immediate',
-    whyThisMatters:
-      'When a family is moving or temporarily housed, school districts may have extra supports for enrollment, attendance, transportation, and school continuity.',
-    steps: [
-      'Open the OSPI homelessness page, then open the liaison contact list for your district.',
-      'Call or email the liaison and explain your family is in temporary housing or is moving between placements.',
-      'Ask about staying in the current school, transportation, free school meals, and how to proceed if records are missing.',
-    ],
-    usefulDocuments: {
-      required: ['Specific school paperwork requirements vary by district.'],
-      alternativesToConfirm: ['Ask what can be accepted temporarily if birth certificates or school records are not available right now.'],
-      helpful: ['Current school name, student names, and any existing school ID numbers if available.'],
-      unverified: ['District-level procedures may change and should be confirmed with the liaison.'],
-    },
-    missingDocsPlan:
-      'Request immediate enrollment and support pathways while missing documents are being recovered.',
-    endGoal:
-      'End goal: establish a school continuity plan that supports attendance, meals, and transportation.',
-    resources: [
-      {
-        label: 'OSPI students experiencing homelessness',
-        url: 'https://ospi.k12.wa.us/student-success/access-opportunity-education/students-experiencing-homelessness',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-      {
-        label: 'OSPI homeless education liaison contact list',
-        url: 'https://ospi.k12.wa.us/student-success/access-opportunity-education/students-experiencing-homelessness/homeless-education-liaison-contact-list',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-    ],
+  'Thurston County': {
+    label: 'Thurston County housing and shelter line',
+    phone: '844-628-7343',
+    url: 'https://fscss.org/coordinated-entry/',
+    note: 'Listed by the county coordinated entry lead agency.',
   },
-  {
-    id: 'birth-records',
-    title: 'Find the children\'s birth records',
-    category: 'next',
-    whyThisMatters:
-      'Birth records are often requested during school, benefits, and identity-related processes.',
-    steps: [
-      'List each child\'s birth state first.',
-      'If born in Washington, open the WA Department of Health birth record page and review eligibility and identity instructions before paying.',
-      'If born outside Washington, use that state\'s official vital records office and confirm equivalent requirements.',
-    ],
-    usefulDocuments: {
-      required: ['Identity and qualifying-relationship documentation is required for certified copies.'],
-      alternativesToConfirm: ['When no photo ID is available, confirm official alternate identification instructions with the vital records office.'],
-      helpful: ['Any prior hospital paperwork, immunization records, or school records with birth details.'],
-      unverified: ['Do not assume records can be issued without further verification.'],
-    },
-    missingDocsPlan:
-      'Contact the office first to avoid paying for an order that cannot be completed without additional identity evidence.',
-    endGoal:
-      'End goal: understand exact birth-record requirements and complete the correct request path for each child.',
-    resources: [
-      {
-        label: 'Washington State Department of Health birth records',
-        url: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
-        verificationStatus: 'Verified',
-        lastVerified: birthRecordCheckDate,
-        requiresWalkthrough: true,
-        walkthrough: {
-          id: 'wa-doh-birth-record-ordering',
-          title: 'Washington birth certificate ordering process',
-          userGoal: 'Understand the public requirements and entry point before ordering a Washington birth certificate.',
-          serviceName: 'Washington State Department of Health Vital Records',
-          officialWebsiteUrl: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
-          status: 'Verified',
-          lastCapturedAt: birthRecordCheckDate,
-          checkedOn: birthRecordCheckDate,
-          mayBeOutdated: false,
-          aiSupportNotes: [
-            'The public Department of Health page confirms the official product categories, eligibility, required information, and fee starting point.',
-            'The public VitalChek landing page is the public entry point for online ordering but the actual form requires personal information, identity validation, and payment.',
-            'The restricted identity-check and payment screens were not visited because they require real personal information and access controls.',
-          ],
-          summary:
-            'The public process starts on the Washington Department of Health (DOH) birth record page and then routes users to a public VitalChek ordering entry page. The actual application, identity checks, and payment remain restricted and were not explored with real data.',
-          steps: [
-            {
-              id: 'doh-birth-record-overview',
-              heading: 'Confirm the official service and public requirements',
-              instruction:
-                'Open the Washington Department of Health birth record page and confirm the record products, who qualifies, and the required information before ordering.',
-              screenshotAlt: 'Washington State Department of Health birth-record page showing the official record products and who qualifies.',
-              screenshotUrl: '/wa-doh-birth-record-landing.png',
-              sourceUrl: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
-              verificationStatus: 'confirmed',
-              annotations: [
-                { kind: 'highlight', label: 'Highlight the main eligibility and information requirements section.' },
-                { kind: 'arrow', label: 'Point to the public “Who Qualifies?” and “What Do I Need to Provide?” sections.' },
-              ],
-            },
-            {
-              id: 'vitalchek-public-entry',
-              heading: 'Open the public order entry page',
-              instruction:
-                'Use the public VitalChek ordering landing page to confirm that the state partners with an online ordering service for Washington birth certificates. Do not enter personal information beyond public browsing.',
-              screenshotAlt: 'Public VitalChek landing page showing online order entry for vital records.',
-              screenshotUrl: '/vitalchek-public-homepage.png',
-              sourceUrl: 'https://www.vitalchek.com/',
-              verificationStatus: 'confirmed',
-              annotations: [
-                { kind: 'highlight', label: 'Highlight the public “Order Certificate” entry area and the birth certificate options.' },
-                { kind: 'arrow', label: 'Point to the publicly visible order flow, not the restricted form fields that require personal information.' },
-              ],
-            },
-            {
-              id: 'restricted-order-form',
-              heading: 'Prepare for the restricted application step',
-              instruction:
-                'The DOH page says the order requires submitting the application, identity documentation, proof of qualifying relationship, and payment. That part was not safely explored because it requires real personal information and access controls.',
-              screenshotAlt: 'No screenshot captured because the actual identity, relationship, and payment pages are restricted and require personal information.',
-              sourceUrl: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
-              verificationStatus: 'partially explored',
-              annotations: [
-                { kind: 'highlight', label: 'Note that the public page lists the required information, but the actual form and payment screens remain restricted.' },
-                { kind: 'arrow', label: 'Mark the remaining steps as needing verified data and authentication before they can be confirmed.' },
-              ],
-            },
-          ],
-        },
-      },
-    ],
+  'Whatcom County': {
+    label: 'Whatcom County coordinated entry access',
+    phone: '360-734-5121',
+    note: 'Listed on whatcomcounty.us.',
   },
-  {
-    id: 'ssa-cards',
-    title: 'Find out how to replace Social Security cards',
-    category: 'next',
-    whyThisMatters:
-      'Some programs may request Social Security information, and replacement card steps can take time.',
-    steps: [
-      'Ask DSHS first what is required for your current benefits application.',
-      'If replacement cards are needed, open the SSA replace-card page and review identity evidence rules.',
-      'Call SSA before appointments to confirm acceptable alternatives when documents are missing.',
-    ],
-    usefulDocuments: {
-      required: ['SSA identity and evidence requirements apply.'],
-      alternativesToConfirm: ['Ask which alternatives are acceptable before traveling to an office.'],
-      helpful: ['Any previous SSA letters, case references, or related state agency notes.'],
-      unverified: ['Do not assume replacement approval until SSA confirms documentation.'],
-    },
-    missingDocsPlan:
-      'Use DSHS guidance to prioritize what is truly needed now versus what can be completed later.',
-    endGoal:
-      'End goal: decide whether card replacement is needed now and confirm exactly which evidence to bring.',
-    resources: [
-      {
-        label: 'SSA replace Social Security card',
-        url: 'https://www.ssa.gov/number-card/replace-card',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-      {
-        label: 'Social Security Administration phone',
-        phone: '800-772-1213',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-    ],
+  'Skagit County': {
+    label: 'Skagit County coordinated entry (VOA Connect Line)',
+    phone: '360-862-4357',
+    url: 'https://www.voaww.org/connect',
+    note: 'Listed by the provider, not on a county page.',
   },
-  {
-    id: 'immigration-support',
-    title: 'Get help with immigration-related paperwork and referrals',
-    category: 'next',
-    whyThisMatters:
-      'Immigration-related paperwork and service matching can be time-sensitive, and the right follow-up depends on whether you need document help, eligibility questions, or referrals to trusted services.',
-    steps: [
-      'Start by asking whether you need help with forms, identification, family-based paperwork, or referrals to an immigration-aware service.',
-      'Use a trusted legal aid or community-organizing service to understand what documents may be required and what alternatives may be accepted.',
-      'Write down the office name, phone number, and next deadline so you can follow up without losing track of the process.',
-    ],
-    usefulDocuments: {
-      required: ['The exact papers needed depend on the immigration question and the service provider.'],
-      alternativesToConfirm: ['Ask which documents can be submitted or summarized if original records are missing or incomplete.'],
-      helpful: ['Any letters, notices, prior applications, or family documents that may explain the issue.'],
-      unverified: ['Do not rely on online forms alone before a trusted provider confirms the right next steps.'],
-    },
-    missingDocsPlan:
-      'Call or email an immigration-aware service and ask exactly which records they need from you before you submit anything.',
-    endGoal:
-      'End goal: identify the correct service or legal aid pathway and get a clear next step for your paperwork.',
-    resources: [
-      {
-        label: 'Washington Immigration Resource Center',
-        url: 'https://www.washingtonimmigration.org/',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-      {
-        label: 'Northwest Immigrant Rights Project',
-        url: 'https://www.nwirp.org/',
-        verificationStatus: 'Verified',
-        lastVerified: today,
-      },
-    ],
+  'Island County': {
+    label: 'Island County Housing Support Center',
+    url: 'https://www.islandcountywa.gov/890/Housing-Support-Center',
+    note: 'No intake phone confirmed on the county page.',
   },
-  {
-    id: 'housing-follow-up',
-    title: 'Follow up on housing and financial assistance',
-    category: 'later',
-    whyThisMatters:
-      'Longer-term housing and financial supports often require multiple follow-ups and referrals over time.',
-    steps: [
-      'Ask shelter intake staff or an advocate for referrals to transitional housing, rapid rehousing, and financial assistance programs.',
-      'Track each referral date and who to contact if you do not hear back.',
-      'Continue checking on pending benefit applications and remaining verification requests.',
-    ],
-    usefulDocuments: {
-      required: ['Referral and application requirements vary by program.'],
-      alternativesToConfirm: ['Ask each program which alternatives can be used while records are still being replaced.'],
-      helpful: ['A written list of application IDs, deadlines, and callback names.'],
-      unverified: ['Referrals do not guarantee placement or payment.'],
-    },
-    missingDocsPlan:
-      'Keep moving with available referrals and ask every program what can be started before all documents are recovered.',
-    endGoal:
-      'End goal: build a steady follow-up plan for housing placement and financial stability.',
-    resources: [],
+  'Clark County': {
+    label: 'Clark County Housing Solutions Center',
+    phone: '360-695-9677',
+    url: 'https://hsc-swwa.org/partner-resources/coordinated-entry/',
+    note: 'Listed by the county coordinated entry lead agency.',
   },
-]
+  'Cowlitz County': {
+    label: 'Cowlitz County coordinated entry',
+    url: 'https://www.co.cowlitz.wa.us/2540/Coordinated-Entry',
+    note: 'Listed on co.cowlitz.wa.us.',
+  },
+  'Lewis County': {
+    label: 'Lewis County coordinated entry (CCAP)',
+    phone: '360-836-1937',
+    url: 'https://lewiscountywa.gov/departments/public-health/social-services/homeless-and-housing-program/',
+    note: 'Listed on lewiscountywa.gov.',
+  },
+  'Mason County': {
+    label: 'Mason County housing and homelessness',
+    url: 'https://masoncountywa.gov/departments/public_health/community_health_and_human_services/housing_homelessness.php',
+    note: 'County page lists a North Mason number that looks wrong, so no phone is shown.',
+  },
+  'Jefferson County': {
+    label: 'Jefferson County housing services (OlyCAP)',
+    url: 'https://olycap.org/housing-services',
+    note: 'Phone not confirmed on the provider page.',
+  },
+  'Clallam County': {
+    label: 'Clallam County Housing Resource Center (Port Angeles)',
+    phone: '360-452-7224',
+    url: 'https://serenityhouseclallam.org/coordinated-entry/',
+    note: 'Port Angeles number; Sequim and Forks centers are listed on the same page.',
+  },
+  'Pacific County': {
+    label: 'Pacific County coordinated entry (CCAP)',
+    phone: '360-533-5100',
+    url: 'https://www.coastalcap.org/housing-and-energy-services/housing-services/',
+    note: 'Number not re-confirmed on the exact page.',
+  },
+  'Grays Harbor County': {
+    label: 'Grays Harbor coordinated entry (CCAP)',
+    phone: '360-533-5100',
+    url: 'https://www.coastalcap.org/',
+    note: 'County website page was unavailable when checked.',
+  },
+  'Wahkiakum County': {
+    label: 'Wahkiakum County community assistance',
+    url: 'https://www.co.wahkiakum.wa.us/244/Community-Assistance',
+    note: 'No phone confirmed on the county page.',
+  },
+}
 
 export const REVIEW_NEEDED_ITEMS = [
-  'King County emergency family shelter intake phone number (206-245-1026) needs manual verification before public launch.',
-  'Shelter-specific document requirements and intake eligibility rules must be confirmed with current providers.',
+  'County housing access points were found on official county or lead-agency pages on 2026-11-03. Confirm each before launch.',
+  'San Juan County has no confirmed access point yet.',
+  'Wait times, eligibility, and document requirements for shelters were not verified.',
+  'Screenshot walkthroughs not yet reviewed by a person are labeled "needs review".',
 ]

@@ -8,9 +8,15 @@ import {
   type AnswerMap,
 } from './recommendationLogic'
 
+const DOCUMENT_BOXES = [
+  { key: 'required', title: 'Bring or have ready', className: 'required' },
+  { key: 'helpful', title: 'Helpful to have', className: 'helpful' },
+  { key: 'alternativesToConfirm', title: 'Ask to confirm', className: 'confirm' },
+  { key: 'unverified', title: 'Keep in mind', className: 'caution' },
+] as const
+
 const PLAN_TITLE = 'Your next steps'
-const RESULTS_INTRO =
-  'You can begin seeking help even if you do not have every document. Start with the step that feels most urgent, and ask each agency what information or alternatives they can accept.'
+const RESULTS_INTRO = 'Start at the top. You can begin without every document; ask what can wait.'
 
 function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -61,23 +67,9 @@ function App() {
     })
   }
 
-  const onTextChange = (value: string) => {
-    setAnswers((previous) => {
-      const nextValue = value.trim()
-      return {
-        ...previous,
-        [question.id]: nextValue ? [nextValue] : [],
-      }
-    })
-  }
-
   const onContinue = () => {
     if (!question) {
       setShowResults(true)
-      return
-    }
-
-    if (question.type === 'text' && !selectedOptions.length && !question.optional) {
       return
     }
 
@@ -106,8 +98,7 @@ function App() {
     setShowSafetyDetails(false)
   }
 
-  const canContinue =
-    question?.type === 'text' ? true : selectedOptions.length > 0 || Boolean(question?.optional)
+  const canContinue = selectedOptions.length > 0
   const progress = visibleQuestions.length
     ? Math.round(((safeQuestionIndex + 1) / visibleQuestions.length) * 100)
     : 0
@@ -172,21 +163,6 @@ function App() {
               </div>
               <h2 ref={headingRef} tabIndex={-1}>{question.prompt}</h2>
               {question.helperText && <p className="helper-text">{question.helperText}</p>}
-              {question.type === 'text' ? (
-                <div className="text-question">
-                  <label className="sr-only" htmlFor={question.id}>
-                    {question.prompt}
-                  </label>
-                  <input
-                    id={question.id}
-                    type="text"
-                    value={selectedOptions[0] ?? ''}
-                    placeholder={question.placeholder ?? 'Type here'}
-                    onChange={(event) => onTextChange(event.target.value)}
-                  />
-                  {question.optional && <p className="optional-note">Optional</p>}
-                </div>
-              ) : (
                 <ul className="option-list" role={question.multiSelect ? 'group' : 'radiogroup'} aria-label={question.prompt}>
                   {question.options?.map((option) => {
                     const isSelected = selectedOptions.includes(option)
@@ -208,7 +184,6 @@ function App() {
                     )
                   })}
                 </ul>
-              )}
               <div className="wizard-actions">
                 <button
                   type="button"
@@ -231,10 +206,6 @@ function App() {
         <main className="results-shell">
           <h2 ref={headingRef} tabIndex={-1}>{PLAN_TITLE}</h2>
           <p className="intro">{RESULTS_INTRO}</p>
-          <p className="encouragement">
-            You do not need to do everything in one day. Start with what feels most urgent and ask
-            each agency what they can accept now.
-          </p>
 
           {!activeCard && (
             <p className="notice-inline">
@@ -252,9 +223,11 @@ function App() {
                 <p className={`category ${activeCard.category}`}>{activeCard.category.toUpperCase()}</p>
               </div>
               <h3>{activeCard.title}</h3>
-              <p>
-                <strong>Why this matters:</strong> {activeCard.whyThisMatters}
-              </p>
+              {activeCard.whyThisMatters && (
+                <p>
+                  <strong>Why this matters:</strong> {activeCard.whyThisMatters}
+                </p>
+              )}
 
               <h4>What to do next</h4>
               <ol className="action-steps">
@@ -263,50 +236,40 @@ function App() {
                 ))}
               </ol>
 
-              <h4>What to check before you act</h4>
-              <div className="document-grid">
-                <div className="info-card required">
-                  <h5>Required to check</h5>
-                  <ul>
-                    {activeCard.usefulDocuments.required.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="info-card helpful">
-                  <h5>Helpful to have</h5>
-                  <ul>
-                    {activeCard.usefulDocuments.helpful.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="info-card confirm">
-                  <h5>Ask to confirm</h5>
-                  <ul>
-                    {activeCard.usefulDocuments.alternativesToConfirm.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="info-card caution">
-                  <h5>Important caution</h5>
-                  <ul>
-                    {activeCard.usefulDocuments.unverified.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+              {Object.values(activeCard.usefulDocuments).some((list) => list.length > 0) && (
+                <>
+                  <h4>Before you go</h4>
+                  <div className="document-grid">
+                    {DOCUMENT_BOXES.map(({ key, title, className }) =>
+                      activeCard.usefulDocuments[key].length > 0 ? (
+                        <div key={key} className={`info-card ${className}`}>
+                          <h5>{title}</h5>
+                          <ul>
+                            {activeCard.usefulDocuments[key].map((item) => (
+                              <li key={item}>{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null,
+                    )}
+                  </div>
+                </>
+              )}
 
-              <div className="supporting-message">
-                <p>
-                  <strong>Next action:</strong> {activeCard.missingDocsPlan}
-                </p>
-                <p>
-                  <strong>Goal:</strong> {activeCard.endGoal}
-                </p>
-              </div>
+              {(activeCard.missingDocsPlan || activeCard.endGoal) && (
+                <div className="supporting-message">
+                  {activeCard.missingDocsPlan && (
+                    <p>
+                      <strong>Next action:</strong> {activeCard.missingDocsPlan}
+                    </p>
+                  )}
+                  {activeCard.endGoal && (
+                    <p>
+                      <strong>Goal:</strong> {activeCard.endGoal}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {activeCard.resources.length > 0 ? (
                 <ul className="resource-list">

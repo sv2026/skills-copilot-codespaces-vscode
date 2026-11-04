@@ -1,4 +1,8 @@
-import { ACTION_CARDS, type ActionCard } from './resourceData'
+import type { ActionCard } from './resourceData'
+import { OPT } from './options'
+import { buildCards } from './planBuilder'
+
+export { OPT }
 
 export type Question = {
   id: string
@@ -6,38 +10,10 @@ export type Question = {
   helperText?: string
   multiSelect: boolean
   options?: string[]
-  type?: 'choice' | 'text'
-  placeholder?: string
-  optional?: boolean
 }
 
 export type AnswerMap = Record<string, string[]>
 
-export const HELP_TOPIC_OPTIONS = [
-  'Finding a safe place to stay',
-  'Housing assistance',
-  'Food and basic needs',
-  'Cash or financial assistance',
-  'Replacing or obtaining documents',
-  'Help understanding immigration-related paperwork or finding immigration-aware services',
-  'School or education support for my children',
-  'Something else / I\'m not sure',
-]
-
-export const HOUSING_URGENCY_OPTIONS = [
-  'Tonight',
-  'Within the next few days',
-  'I am safe for now but need long-term housing',
-  'I do not need housing help right now',
-]
-
-export const FINANCE_OPTIONS = [
-  'I have almost no money available',
-  'I have some money but cannot cover my basic needs',
-  'I have income but need help with housing costs',
-  'I do not need financial help right now; I just need paperwork or school support',
-  'I prefer not to answer',
-]
 
 export const COUNTY_OPTIONS = [
   'King County',
@@ -62,235 +38,187 @@ export const COUNTY_OPTIONS = [
   "I'm not sure",
 ]
 
-export const CHILDREN_OPTIONS = ['Yes', 'No', 'Prefer not to say']
-export const IMMIGRATION_OPTIONS = ['Yes', 'No', 'Prefer not to say']
+const values = (group: Record<string, string>) => Object.values(group)
 
 export const QUESTIONS: Question[] = [
   {
-    id: 'helpTopics',
-    prompt: 'What would you like help with?',
+    id: 'needs',
+    prompt: 'What do you need help with?',
+    helperText: 'Pick all that apply.',
     multiSelect: true,
-    options: HELP_TOPIC_OPTIONS,
+    options: values(OPT.needs),
   },
   {
-    id: 'childrenSupport',
-    prompt: 'Are you looking for support for any children in your care?',
-    helperText: 'This is optional and helps us decide whether child-specific resources are relevant.',
+    id: 'children',
+    prompt: 'Do children need to be included in your plan?',
     multiSelect: false,
-    options: CHILDREN_OPTIONS,
+    options: values(OPT.children),
   },
   {
-    id: 'locationCounty',
-    prompt: 'Which county are you currently in?',
-    helperText: 'This version focuses on Western Washington counties. If your county is not listed, choose “Other / not listed.”',
+    id: 'county',
+    prompt: 'Which county are you in?',
+    helperText: 'This version covers Western Washington.',
     multiSelect: false,
     options: COUNTY_OPTIONS,
   },
   {
-    id: 'housingUrgency',
+    id: 'urgency',
     prompt: 'When do you need a safe place to stay?',
     multiSelect: false,
-    options: HOUSING_URGENCY_OPTIONS,
+    options: values(OPT.urgency),
   },
   {
-    id: 'finances',
-    prompt: 'Which statement best describes your current finances?',
-    helperText: 'You do not need to share exact account balances.',
+    id: 'contact',
+    prompt: 'How can you safely contact services?',
     multiSelect: false,
-    options: FINANCE_OPTIONS,
+    options: values(OPT.contact),
   },
   {
-    id: 'userIdDocs',
-    prompt: 'Which of these documents can you access right now?',
+    id: 'transport',
+    prompt: 'Can you get to an office or shelter in person?',
     multiSelect: false,
-    options: [
-      'My own government-issued photo ID',
-      'Other documents that might help establish my identity',
-      'No identification documents',
-      "I'm not sure",
-    ],
+    options: values(OPT.transport),
   },
   {
-    id: 'childrenDocs',
-    prompt: "Do you have access to your children's birth certificates or Social Security numbers?",
-    multiSelect: false,
-    options: [
-      'I have both',
-      'I have their birth certificates but not their Social Security numbers',
-      'I have their Social Security numbers but not their birth certificates',
-      'I have neither',
-      "I'm not sure",
-    ],
-  },
-  {
-    id: 'schoolSupport',
-    prompt: 'What school or education support would be most helpful?',
+    id: 'benefits',
+    prompt: 'Do you already get, or have you applied for, any of these?',
+    helperText: 'Pick all that apply.',
     multiSelect: true,
-    options: [
-      'Staying in their current school',
-      'Transportation to school',
-      'Free school meals',
-      'Enrolling in a different school',
-      "I'm not sure yet",
-    ],
+    options: values(OPT.benefits),
   },
   {
-    id: 'schoolDistrict',
-    prompt: 'If you want, which school district are you thinking about?',
-    helperText: 'This is optional. If you are not sure, leave it blank and we can still suggest next steps.',
-    multiSelect: false,
-    type: 'text',
-    placeholder: 'Optional: school district name or district code',
-    optional: true,
+    id: 'docs',
+    prompt: 'Which of these do you have or can safely get?',
+    helperText: 'Pick all that apply.',
+    multiSelect: true,
+    options: values(OPT.docs),
+  },
+  {
+    id: 'schoolNeeds',
+    prompt: 'What do your children need for school?',
+    helperText: 'Pick all that apply.',
+    multiSelect: true,
+    options: values(OPT.school),
   },
   {
     id: 'immigrationHelp',
-    prompt: 'Would you like help with immigration-related paperwork or finding services that understand immigration-related concerns?',
-    helperText: 'This is optional. You do not need to share your status or citizenship details.',
+    prompt: 'What kind of immigration help do you need?',
     multiSelect: false,
-    options: IMMIGRATION_OPTIONS,
+    options: values(OPT.immigration),
   },
 ]
 
+const question = (id: string): Question => QUESTIONS.find((item) => item.id === id) as Question
+
 export const buildVisibleQuestions = (answers: AnswerMap): Question[] => {
-  const helpTopics = answers.helpTopics ?? []
-  const childrenSupport = answers.childrenSupport?.[0]
-  const wantsSchoolSupport =
-    helpTopics.includes('School or education support for my children') ||
-    (childrenSupport === 'Yes' && helpTopics.includes("Something else / I'm not sure"))
-  const needsHousing =
-    helpTopics.includes('Finding a safe place to stay') || helpTopics.includes('Housing assistance')
-  const needsFoodOrCash =
-    helpTopics.includes('Food and basic needs') || helpTopics.includes('Cash or financial assistance')
-  const needsDocs = helpTopics.includes('Replacing or obtaining documents')
-  const needsImmigration =
-    helpTopics.includes('Help understanding immigration-related paperwork or finding immigration-aware services')
+  const needs = answers.needs ?? []
+  const has = (need: string) => needs.includes(need)
+  const visible: Question[] = [question('needs')]
 
-  const visibleQuestions: Question[] = [QUESTIONS[0]]
-
-  if (helpTopics.length > 0) {
-    visibleQuestions.push(QUESTIONS[1])
+  if (needs.length === 0) {
+    return visible
   }
 
-  visibleQuestions.push(QUESTIONS[2])
+  const wantsSchool = has(OPT.needs.school)
+  const hasChildren = wantsSchool || answers.children?.[0] === OPT.children.yes
+  const wantsShelter = has(OPT.needs.shelter) || has(OPT.needs.unsure)
 
-  if (needsHousing) {
-    visibleQuestions.push(QUESTIONS[3])
+  if (!wantsSchool) {
+    visible.push(question('children'))
   }
 
-  if (needsFoodOrCash || helpTopics.includes("Something else / I'm not sure")) {
-    visibleQuestions.push(QUESTIONS[4])
+  visible.push(question('county'))
+
+  if (wantsShelter) {
+    visible.push(question('urgency'))
   }
 
-  if (needsDocs || helpTopics.includes("Something else / I'm not sure")) {
-    visibleQuestions.push(QUESTIONS[5])
+  visible.push(question('contact'), question('transport'))
+
+  if (has(OPT.needs.food) || has(OPT.needs.cash) || has(OPT.needs.unsure)) {
+    visible.push(question('benefits'))
   }
 
-  if (childrenSupport === 'Yes' && (needsDocs || wantsSchoolSupport)) {
-    visibleQuestions.push(QUESTIONS[6])
+  if (has(OPT.needs.docs) || wantsSchool) {
+    const docs = question('docs')
+    const childDocs: string[] = [OPT.docs.kidsBirth, OPT.docs.kidsSsn, OPT.docs.kidsSchool]
+    visible.push({
+      ...docs,
+      options: docs.options?.filter((option) => {
+        if (childDocs.includes(option)) {
+          return hasChildren
+        }
+        return option !== OPT.docs.immigration || has(OPT.needs.immigration)
+      }),
+    })
   }
 
-  if (childrenSupport === 'Yes' && wantsSchoolSupport) {
-    visibleQuestions.push(QUESTIONS[7])
-    visibleQuestions.push(QUESTIONS[8])
+  if (wantsSchool) {
+    visible.push(question('schoolNeeds'))
   }
 
-  if (needsImmigration) {
-    visibleQuestions.push(QUESTIONS[9])
+  if (has(OPT.needs.immigration)) {
+    visible.push(question('immigrationHelp'))
   }
 
-  return visibleQuestions
+  return visible
+}
+
+export type Profile = {
+  shelter: boolean
+  food: boolean
+  cash: boolean
+  docs: boolean
+  school: boolean
+  immigration: boolean
+  unsure: boolean
+  children: boolean
+  county?: string
+  urgency?: 'tonight' | 'days' | 'weeks' | 'later'
+  contact?: 'phone' | 'online' | 'inPerson' | 'unsure'
+  transport?: 'ok' | 'help' | 'no'
+  getsFood: boolean
+  getsCash: boolean
+  waiting: boolean
+  hasDoc: (doc: keyof typeof OPT.docs) => boolean
+  schoolNeeds: string[]
+  immigrationHelp?: keyof typeof OPT.immigration
+}
+
+const keyOf = <T extends Record<string, string>>(group: T, value?: string) =>
+  (Object.keys(group) as (keyof T)[]).find((key) => group[key] === value)
+
+export const toProfile = (answers: AnswerMap): Profile => {
+  const needs = answers.needs ?? []
+  const owned = answers.docs ?? []
+  const benefits = answers.benefits ?? []
+  const school = needs.includes(OPT.needs.school)
+
+  return {
+    shelter: needs.includes(OPT.needs.shelter),
+    food: needs.includes(OPT.needs.food),
+    cash: needs.includes(OPT.needs.cash),
+    docs: needs.includes(OPT.needs.docs),
+    school,
+    immigration: needs.includes(OPT.needs.immigration),
+    unsure: needs.includes(OPT.needs.unsure),
+    children: school || answers.children?.[0] === OPT.children.yes,
+    county: COUNTY_OPTIONS.includes(answers.county?.[0] ?? '') ? answers.county?.[0] : undefined,
+    urgency: keyOf(OPT.urgency, answers.urgency?.[0]),
+    contact: keyOf(OPT.contact, answers.contact?.[0]),
+    transport: keyOf(OPT.transport, answers.transport?.[0]),
+    getsFood: benefits.includes(OPT.benefits.food),
+    getsCash: benefits.includes(OPT.benefits.cash),
+    waiting: benefits.includes(OPT.benefits.waiting),
+    hasDoc: (doc) => owned.includes(OPT.docs[doc]),
+    schoolNeeds: answers.schoolNeeds ?? [],
+    immigrationHelp: keyOf(OPT.immigration, answers.immigrationHelp?.[0]),
+  }
 }
 
 export const getCardsForAnswers = (answers: AnswerMap): ActionCard[] => {
-  const selected = new Set<string>()
-  const helpTopics = answers.helpTopics ?? []
-  const schoolNeeds = answers.schoolSupport ?? []
-  const housingUrgency = answers.housingUrgency?.[0]
-  const childrenSupport = answers.childrenSupport?.[0]
-  const childrenDocs = answers.childrenDocs?.[0]
-  const userIdDocs = answers.userIdDocs?.[0]
-  const finances = answers.finances?.[0]
-  const schoolSupportSelected = schoolNeeds.length > 0
-
-  const needsSchoolSupport =
-    helpTopics.includes('School or education support for my children') ||
-    (childrenSupport === 'Yes' && schoolSupportSelected)
-
-  const needsHousing =
-    helpTopics.includes('Finding a safe place to stay') ||
-    helpTopics.includes('Housing assistance') ||
-    housingUrgency === 'Tonight' ||
-    housingUrgency === 'Within the next few days' ||
-    housingUrgency === 'I am safe for now but need long-term housing'
-
-  const needsFood = helpTopics.includes('Food and basic needs')
-  const needsCash = helpTopics.includes('Cash or financial assistance')
-  const needsDocs =
-    helpTopics.includes('Replacing or obtaining documents') ||
-    userIdDocs === 'No identification documents' ||
-    userIdDocs === "I'm not sure" ||
-    (childrenSupport === 'Yes' &&
-      (childrenDocs === 'I have neither' || childrenDocs === "I'm not sure"))
-
-  const needsImmigration =
-    helpTopics.includes('Help understanding immigration-related paperwork or finding immigration-aware services') ||
-    answers.immigrationHelp?.[0] === 'Yes'
-
-  if (needsFood) {
-    selected.add('dshs-food-assistance')
+  if ((answers.needs ?? []).length === 0) {
+    return []
   }
-
-  if (needsCash) {
-    selected.add('dshs-cash-assistance')
-  }
-
-  if (needsHousing) {
-    selected.add('shelter-intake')
-    selected.add('housing-follow-up')
-    if (needsSchoolSupport) {
-      selected.add('school-liaison')
-    }
-  }
-
-  if (needsSchoolSupport) {
-    selected.add('school-support')
-  }
-
-  if (needsDocs) {
-    selected.add('birth-records')
-    if (
-      userIdDocs === 'No identification documents' ||
-      (childrenSupport === 'Yes' && childrenDocs === 'I have neither')
-    ) {
-      selected.add('ssa-cards')
-    }
-  }
-
-  if (needsImmigration) {
-    selected.add('immigration-support')
-  }
-
-  if (
-    finances &&
-    finances !== 'I prefer not to answer' &&
-    finances !== 'I do not need financial help right now; I just need paperwork or school support'
-  ) {
-    if (
-      finances === 'I have almost no money available' ||
-      finances === 'I have some money but cannot cover my basic needs' ||
-      finances === 'I have income but need help with housing costs'
-    ) {
-      if (!needsCash && !needsFood) {
-        selected.add('dshs-cash-assistance')
-      }
-    }
-  }
-
-  const cards = ACTION_CARDS.filter((card) => selected.has(card.id)).sort((a, b) => {
-    const categoryOrder = { immediate: 0, next: 1, later: 2 }
-    return categoryOrder[a.category] - categoryOrder[b.category]
-  })
-
-  return cards
+  return buildCards(toProfile(answers))
 }
