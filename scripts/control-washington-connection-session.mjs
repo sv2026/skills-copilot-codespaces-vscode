@@ -1,7 +1,15 @@
 import { chromium } from 'playwright'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import readline from 'node:readline'
 
-const profileDir = '/tmp/washington-connection-walkthrough-session'
+const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'washington-connection-walkthrough-'))
+const removeProfile = () => fs.rmSync(profileDir, { recursive: true, force: true })
+process.on('exit', removeProfile)
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, () => process.exit(1))
+}
 const applicationUrl = 'https://www.washingtonconnection.org/eapplication/home.go?action=Introduction&source='
 
 const context = await chromium.launchPersistentContext(profileDir, {

@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { REVIEW_NEEDED_ITEMS, type ActionCard } from './resourceData'
 import { VisualWalkthrough } from './components/VisualWalkthrough'
 import {
-  QUESTIONS,
   buildVisibleQuestions,
   getCardsForAnswers,
   type AnswerMap,
@@ -20,18 +19,28 @@ function App() {
   const [showSafetyDetails, setShowSafetyDetails] = useState(false)
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
 
+  const headingRef = useRef<HTMLHeadingElement>(null)
+
   const visibleQuestions = useMemo(() => buildVisibleQuestions(answers), [answers])
-  const question = visibleQuestions[currentQuestionIndex]
+  const safeQuestionIndex = Math.min(currentQuestionIndex, Math.max(visibleQuestions.length - 1, 0))
+  const question = visibleQuestions[safeQuestionIndex]
   const selectedOptions = answers[question?.id] ?? []
 
-  useEffect(() => {
-    if (currentQuestionIndex >= visibleQuestions.length) {
-      setCurrentQuestionIndex(Math.max(visibleQuestions.length - 1, 0))
-    }
-  }, [currentQuestionIndex, visibleQuestions.length])
+  // Answers to questions that are no longer shown must not influence the plan.
+  const activeAnswers = useMemo(() => {
+    const visibleIds = new Set(visibleQuestions.map((item) => item.id))
+    return Object.fromEntries(
+      Object.entries(answers).filter(([id]) => visibleIds.has(id)),
+    ) as AnswerMap
+  }, [answers, visibleQuestions])
 
-  const planCards = useMemo(() => getCardsForAnswers(answers), [answers])
-  const activeCard: ActionCard | undefined = planCards[currentSlideIndex]
+  const planCards = useMemo(() => getCardsForAnswers(activeAnswers), [activeAnswers])
+  const safeSlideIndex = Math.min(currentSlideIndex, Math.max(planCards.length - 1, 0))
+  const activeCard: ActionCard | undefined = planCards[safeSlideIndex]
+
+  useEffect(() => {
+    headingRef.current?.focus()
+  }, [safeQuestionIndex, safeSlideIndex, showResults])
 
   const onToggleOption = (option: string) => {
     setAnswers((previous) => {
@@ -72,8 +81,8 @@ function App() {
       return
     }
 
-    if (currentQuestionIndex < visibleQuestions.length - 1) {
-      setCurrentQuestionIndex((index) => index + 1)
+    if (safeQuestionIndex < visibleQuestions.length - 1) {
+      setCurrentQuestionIndex(safeQuestionIndex + 1)
       return
     }
 
@@ -86,7 +95,7 @@ function App() {
       return
     }
 
-    setCurrentQuestionIndex((index) => Math.max(index - 1, 0))
+    setCurrentQuestionIndex(Math.max(safeQuestionIndex - 1, 0))
   }
 
   const onStartOver = () => {
@@ -100,7 +109,7 @@ function App() {
   const canContinue =
     question?.type === 'text' ? true : selectedOptions.length > 0 || Boolean(question?.optional)
   const progress = visibleQuestions.length
-    ? Math.round(((currentQuestionIndex + 1) / visibleQuestions.length) * 100)
+    ? Math.round(((safeQuestionIndex + 1) / visibleQuestions.length) * 100)
     : 0
 
   return (
@@ -115,7 +124,7 @@ function App() {
           <button
             type="button"
             className="leave-button"
-            onClick={() => window.location.assign('https://www.weather.gov/')}
+            onClick={() => window.location.replace('https://www.weather.gov/')}
           >
             Leave this page
           </button>
@@ -147,14 +156,21 @@ function App() {
             <>
               <div className="progress-row">
                 <p>
-                  Question {currentQuestionIndex + 1} of {visibleQuestions.length}
+                  Question {safeQuestionIndex + 1} of {visibleQuestions.length}
                 </p>
                 <p>{progress}%</p>
               </div>
-              <div className="progress-track" aria-hidden="true">
+              <div
+                className="progress-track"
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={progress}
+                aria-label="Question progress"
+              >
                 <span style={{ width: `${progress}%` }}></span>
               </div>
-              <h2>{question.prompt}</h2>
+              <h2 ref={headingRef} tabIndex={-1}>{question.prompt}</h2>
               {question.helperText && <p className="helper-text">{question.helperText}</p>}
               {question.type === 'text' ? (
                 <div className="text-question">
@@ -171,7 +187,7 @@ function App() {
                   {question.optional && <p className="optional-note">Optional</p>}
                 </div>
               ) : (
-                <ul className="option-list">
+                <ul className="option-list" role={question.multiSelect ? 'group' : 'radiogroup'} aria-label={question.prompt}>
                   {question.options?.map((option) => {
                     const isSelected = selectedOptions.includes(option)
                     return (
@@ -179,6 +195,8 @@ function App() {
                         <button
                           type="button"
                           className={`option-button${isSelected ? ' selected' : ''}`}
+                          role={question.multiSelect ? 'checkbox' : 'radio'}
+                          aria-checked={isSelected}
                           onClick={() => onToggleOption(option)}
                         >
                           <span className="check" aria-hidden="true">
@@ -195,13 +213,13 @@ function App() {
                 <button
                   type="button"
                   onClick={onBack}
-                  disabled={currentQuestionIndex === 0}
+                  disabled={safeQuestionIndex === 0}
                   className="secondary"
                 >
                   ← Back
                 </button>
                 <button type="button" onClick={onContinue} disabled={!canContinue}>
-                  {currentQuestionIndex === visibleQuestions.length - 1
+                  {safeQuestionIndex === visibleQuestions.length - 1
                     ? 'View my plan'
                     : 'Continue →'}
                 </button>
@@ -211,18 +229,25 @@ function App() {
         </main>
       ) : (
         <main className="results-shell">
-          <h2>{PLAN_TITLE}</h2>
+          <h2 ref={headingRef} tabIndex={-1}>{PLAN_TITLE}</h2>
           <p className="intro">{RESULTS_INTRO}</p>
           <p className="encouragement">
             You do not need to do everything in one day. Start with what feels most urgent and ask
             each agency what they can accept now.
           </p>
 
+          {!activeCard && (
+            <p className="notice-inline">
+              We could not match any steps to your answers. Go back to the questions and choose at
+              least one topic, or ask a local advocate or provider where to start.
+            </p>
+          )}
+
           {activeCard && (
             <section className="slide-card" aria-live="polite">
               <div className="slide-header">
                 <p>
-                  Step {currentSlideIndex + 1} of {planCards.length}
+                  Step {safeSlideIndex + 1} of {planCards.length}
                 </p>
                 <p className={`category ${activeCard.category}`}>{activeCard.category.toUpperCase()}</p>
               </div>
@@ -286,11 +311,11 @@ function App() {
               {activeCard.resources.length > 0 ? (
                 <ul className="resource-list">
                   {activeCard.resources.map((resource) => (
-                    <li key={`${resource.label}-${resource.url ?? resource.phone ?? ''}`} className="resource-card">
+                    <li key={`${activeCard.id}-${resource.label}-${resource.url ?? resource.phone ?? ''}`} className="resource-card">
                       <div className="resource-header">
                         <p className="resource-title">{resource.label}</p>
                         <span className="status-pill">
-                          {renderResourceStatus(resource.verificationStatus)}
+                          {resource.verificationStatus}
                         </span>
                       </div>
                       {resource.url ? (
@@ -326,16 +351,16 @@ function App() {
             <button
               type="button"
               className="secondary"
-              disabled={currentSlideIndex === 0}
-              onClick={() => setCurrentSlideIndex((index) => Math.max(index - 1, 0))}
+              disabled={safeSlideIndex === 0}
+              onClick={() => setCurrentSlideIndex(Math.max(safeSlideIndex - 1, 0))}
             >
               ← Previous slide
             </button>
             <button
               type="button"
-              disabled={currentSlideIndex >= planCards.length - 1}
+              disabled={safeSlideIndex >= planCards.length - 1}
               onClick={() =>
-                setCurrentSlideIndex((index) => Math.min(index + 1, planCards.length - 1))
+                setCurrentSlideIndex(Math.min(safeSlideIndex + 1, planCards.length - 1))
               }
             >
               Next slide →
@@ -379,10 +404,10 @@ function App() {
             <div className="summary-panel-content">
               <section className="answers-review">
                 <ul>
-                  {QUESTIONS.map((item) => (
+                  {visibleQuestions.map((item) => (
                     <li key={item.id}>
                       <p>{item.prompt}</p>
-                      <p>{(answers[item.id] ?? ['No answer recorded']).join(', ')}</p>
+                      <p>{(answers[item.id]?.length ? answers[item.id] : ['No answer recorded']).join(', ')}</p>
                     </li>
                   ))}
                 </ul>
@@ -428,8 +453,5 @@ function App() {
     </div>
   )
 }
-
-const renderResourceStatus = (status: 'Verified' | 'Needs review') =>
-  status === 'Verified' ? 'Verified' : 'Needs review'
 
 export default App

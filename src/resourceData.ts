@@ -172,7 +172,7 @@ export const ACTION_CARDS: ActionCard[] = [
                 viewport: { width: 1440, height: 2200 },
                 reviewedByHuman: false,
               },
-              verificationStatus: 'confirmed',
+              verificationStatus: 'needs review',
               annotations: [
                 { kind: 'highlight', label: 'The page lists information categories that may be needed during the application.' },
                 { kind: 'arrow', label: 'The visible Next control advances through the application guidance.' },
@@ -193,7 +193,7 @@ export const ACTION_CARDS: ActionCard[] = [
                 viewport: { width: 1440, height: 2200 },
                 reviewedByHuman: false,
               },
-              verificationStatus: 'confirmed',
+              verificationStatus: 'needs review',
               annotations: [
                 { kind: 'highlight', label: 'The page explains how to apply and gives visible food and cash processing timelines.' },
                 { kind: 'arrow', label: 'The identity and Social Security number guidance appears before the data-entry screens.' },
@@ -214,7 +214,7 @@ export const ACTION_CARDS: ActionCard[] = [
                 viewport: { width: 1440, height: 2200 },
                 reviewedByHuman: false,
               },
-              verificationStatus: 'confirmed',
+              verificationStatus: 'needs review',
               annotations: [
                 { kind: 'highlight', label: 'Basic Food is visibly listed under Food Assistance.' },
                 { kind: 'arrow', label: 'The visible Next control continues after the relevant benefit selection.' },

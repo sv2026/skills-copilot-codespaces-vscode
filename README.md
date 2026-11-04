@@ -13,8 +13,11 @@ npm run dev
 
 ```bash
 npm run lint
+npm test
 npm run build
 ```
+
+The site is deployed on Vercel from `main` (Vite preset: build `npm run build`, output `dist`). CI runs lint, tests, and build.
 
 ## Notes
 
@@ -24,3 +27,5 @@ npm run build
 - Visual walkthrough metadata is attached per resource and rendered with the reusable `VisualWalkthrough` component.
 - Real screenshot capture/annotation generation requires external browsing + AI services plus human verification before publishing guides.
 - Contact info marked `Needs review` must be manually verified before public launch.
+- Screenshot capture scripts live in `/scripts`; `scripts/annotate-washington-connection-walkthrough.py` (Python, Pillow) adds the annotations. Capture scripts use a temporary browser profile that is deleted on exit.
+- Walkthrough screenshots that are not human-reviewed are labeled `needs review` in the UI.

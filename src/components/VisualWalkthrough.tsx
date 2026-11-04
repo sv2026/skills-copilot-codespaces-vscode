@@ -67,7 +67,7 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
       </ol>
       <div className="walkthrough-ai-notes">
         <p>
-          <strong>AI generation setup required:</strong>
+          <strong>About this walkthrough:</strong>
         </p>
         <ul>
           {walkthrough.aiSupportNotes.map((note) => (

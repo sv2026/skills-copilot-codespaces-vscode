@@ -230,8 +230,8 @@ export const getCardsForAnswers = (answers: AnswerMap): ActionCard[] => {
     helpTopics.includes('Replacing or obtaining documents') ||
     userIdDocs === 'No identification documents' ||
     userIdDocs === "I'm not sure" ||
-    childrenDocs === 'I have neither' ||
-    childrenDocs === "I'm not sure"
+    (childrenSupport === 'Yes' &&
+      (childrenDocs === 'I have neither' || childrenDocs === "I'm not sure"))
 
   const needsImmigration =
     helpTopics.includes('Help understanding immigration-related paperwork or finding immigration-aware services') ||
@@ -259,7 +259,10 @@ export const getCardsForAnswers = (answers: AnswerMap): ActionCard[] => {
 
   if (needsDocs) {
     selected.add('birth-records')
-    if (userIdDocs === 'No identification documents' || childrenDocs === 'I have neither') {
+    if (
+      userIdDocs === 'No identification documents' ||
+      (childrenSupport === 'Yes' && childrenDocs === 'I have neither')
+    ) {
       selected.add('ssa-cards')
     }
   }
