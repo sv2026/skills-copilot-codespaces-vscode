@@ -85,7 +85,7 @@ export const ACTION_CARDS: ActionCard[] = [
     whyThisMatters:
       'A shelter intake team can help with urgent safe placement, transportation options, and referrals for longer-term housing support.',
     steps: [
-      'Call 206-245-1026 and say you are a domestic violence survivor with two school-age children who needs safe placement within the next few days.',
+      'Call 206-245-1026 and say you are a domestic violence survivor who needs safe placement. Mention how soon you need it and whether any children are with you.',
       'Ask specifically about emergency family shelter openings, safe placement, transportation, and longer-term housing referrals.',
       'Write down the person you spoke with, callback instructions, and next steps in case no bed is available right away.',
     ],
