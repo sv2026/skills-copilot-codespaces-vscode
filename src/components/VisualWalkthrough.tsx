@@ -9,23 +9,23 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
     <section className="walkthrough" aria-label={`${walkthrough.title} walkthrough`}>
       <h5>{walkthrough.title}</h5>
       <p className="walkthrough-summary">
-        <strong>User goal:</strong> {walkthrough.userGoal}
+        <strong>Goal:</strong> {walkthrough.userGoal}
       </p>
-      {walkthrough.serviceName && <p>Service: {walkthrough.serviceName}</p>}
+      {walkthrough.serviceName && <p>Website: {walkthrough.serviceName}</p>}
       {walkthrough.summary && <p>{walkthrough.summary}</p>}
       <p>
         Official website:{' '}
         <a href={walkthrough.officialWebsiteUrl} target="_blank" rel="noreferrer">
-          Open source website
+          Open the official website
         </a>
       </p>
       <p>
-        Walkthrough status: <strong>{walkthrough.status}</strong>
-        {walkthrough.lastCapturedAt ? ` · Last screenshot capture: ${walkthrough.lastCapturedAt}` : ''}
+        Status: <strong>{walkthrough.status}</strong>
+        {walkthrough.lastCapturedAt ? ` · Pictures taken: ${walkthrough.lastCapturedAt}` : ''}
       </p>
       {walkthrough.mayBeOutdated && (
         <p className="walkthrough-warning">
-          This walkthrough may be outdated. {walkthrough.outdatedReason}
+          These pictures may be old. {walkthrough.outdatedReason}
         </p>
       )}
       <ol className="walkthrough-step-list">
@@ -35,21 +35,19 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
               Step {index + 1}: {step.heading}
             </h6>
             <p className="walkthrough-step-status">
-              Verification: <strong>{step.verificationStatus}</strong>
+              Checked: <strong>{step.verificationStatus}</strong>
             </p>
             {step.screenshotEvidence && (
               <p className="walkthrough-step-status">
-                Captured: {step.screenshotEvidence.capturedAt} · Viewport:{' '}
-                {step.screenshotEvidence.viewport.width}x{step.screenshotEvidence.viewport.height} ·
-                Human reviewed: {step.screenshotEvidence.reviewedByHuman ? 'Yes' : 'No'}
+                Picture taken: {step.screenshotEvidence.capturedAt} · Checked by a person: {step.screenshotEvidence.reviewedByHuman ? 'Yes' : 'No'}
               </p>
             )}
             <p>{step.instruction}</p>
             {step.sourceUrl && (
               <p>
-                Source:{' '}
+                Page:{' '}
                 <a href={step.sourceUrl} target="_blank" rel="noreferrer">
-                  Official page
+                  Open the official page
                 </a>
               </p>
             )}
@@ -58,7 +56,7 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
                 <img src={step.screenshotUrl} alt={step.screenshotAlt} loading="lazy" />
               ) : (
                 <figcaption>
-                  {step.screenshotAlt || 'No verified screenshot has been captured for this step yet.'}
+                  {step.screenshotAlt || 'We do not have a picture for this step yet.'}
                 </figcaption>
               )}
             </figure>
@@ -67,7 +65,7 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
       </ol>
       <div className="walkthrough-ai-notes">
         <p>
-          <strong>About this walkthrough:</strong>
+          <strong>About these pictures:</strong>
         </p>
         <ul>
           {walkthrough.aiSupportNotes.map((note) => (

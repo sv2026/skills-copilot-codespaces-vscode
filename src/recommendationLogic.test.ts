@@ -249,9 +249,9 @@ describe('personas', () => {
   it('transport answers change the steps', () => {
     const a = (transport: string) =>
       steps({ needs: [OPT.needs.food], benefits: [OPT.benefits.none], transport: [transport] }, 'dshs-food-assistance')
-    expect(a(OPT.transport.help)).toContain('transportation help')
+    expect(a(OPT.transport.help)).toContain('help with a ride')
     expect(a(OPT.transport.no)).toContain('cannot travel')
-    expect(a(OPT.transport.ok)).not.toContain('transportation help')
+    expect(a(OPT.transport.ok)).not.toContain('help with a ride')
   })
 
   it('documents: only missing documents get cards', () => {
@@ -276,7 +276,7 @@ describe('personas', () => {
       schoolNeeds: [OPT.school.rides, OPT.school.meals],
     }
     const text = steps(a, 'school-support')
-    expect(text).toContain('transportation')
+    expect(text).toContain('rides')
     expect(text).toContain('meals')
     expect(text).not.toContain('immediate enrollment')
   })
@@ -289,8 +289,8 @@ describe('personas', () => {
       schoolNeeds: [OPT.school.enroll],
     }
     expect(ids(a)).toContain('school-liaison')
-    expect(steps(a, 'school-liaison')).toContain('If eligible')
-    expect(steps(a, 'school-liaison')).toContain('enrollment should not wait')
+    expect(steps(a, 'school-liaison')).toContain('If you have these rights')
+    expect(steps(a, 'school-liaison')).toContain('start school even without all papers')
   })
 
   it('immigration help type changes the plan', () => {
@@ -306,7 +306,7 @@ describe('personas', () => {
       benefits: [OPT.benefits.none],
       immigrationHelp: [OPT.immigration.benefits],
     }
-    expect(steps(a, 'dshs-food-assistance')).toContain('You can ask an immigration legal provider')
+    expect(steps(a, 'dshs-food-assistance')).toContain('You can ask an immigration lawyer')
     expect(ids(a).indexOf('immigration-support')).toBeLessThan(ids(a).indexOf('dshs-food-assistance'))
   })
 

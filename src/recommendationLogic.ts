@@ -58,7 +58,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'county',
     prompt: 'Which county are you in?',
-    helperText: 'This version covers Western Washington.',
+    helperText: 'This site covers Western Washington.',
     multiSelect: false,
     options: COUNTY_OPTIONS,
   },
@@ -70,13 +70,13 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 'transport',
-    prompt: 'Can you get to an office or shelter in person?',
+    prompt: 'Can you go to an office or shelter?',
     multiSelect: false,
     options: values(OPT.transport),
   },
   {
     id: 'benefits',
-    prompt: 'Do you already get, or have you applied for, any of these?',
+    prompt: 'Do you get any of these, or have you applied?',
     helperText: 'Pick all that apply.',
     multiSelect: true,
     options: values(OPT.benefits),
@@ -89,7 +89,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 'docs',
-    prompt: 'Which of these do you have or can safely get?',
+    prompt: 'Which of these do you have, or can you get safely?',
     helperText: 'Pick all that apply.',
     multiSelect: true,
     options: values(OPT.docs),
@@ -103,7 +103,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 'immigrationHelp',
-    prompt: 'What kind of immigration help do you need?',
+    prompt: 'What immigration help do you need?',
     multiSelect: false,
     options: values(OPT.immigration),
   },
