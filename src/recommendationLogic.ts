@@ -58,7 +58,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'county',
     prompt: 'Which county are you in?',
-    helperText: 'This version covers Western Washington.',
+    helperText: 'This site covers Western Washington.',
     multiSelect: false,
     options: COUNTY_OPTIONS,
   },
@@ -69,14 +69,8 @@ export const QUESTIONS: Question[] = [
     options: values(OPT.urgency),
   },
   {
-    id: 'transport',
-    prompt: 'Can you get to an office or shelter in person?',
-    multiSelect: false,
-    options: values(OPT.transport),
-  },
-  {
     id: 'benefits',
-    prompt: 'Do you already get, or have you applied for, any of these?',
+    prompt: 'Do you get any of these, or have you applied?',
     helperText: 'Pick all that apply.',
     multiSelect: true,
     options: values(OPT.benefits),
@@ -89,7 +83,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 'docs',
-    prompt: 'Which of these do you have or can safely get?',
+    prompt: 'Which of these do you have, or can you get safely?',
     helperText: 'Pick all that apply.',
     multiSelect: true,
     options: values(OPT.docs),
@@ -103,7 +97,7 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 'immigrationHelp',
-    prompt: 'What kind of immigration help do you need?',
+    prompt: 'What immigration help do you need?',
     multiSelect: false,
     options: values(OPT.immigration),
   },
@@ -135,8 +129,6 @@ export const buildVisibleQuestions = (answers: AnswerMap): Question[] => {
   if (wantsShelter) {
     visible.push(question('urgency'))
   }
-
-  visible.push(question('transport'))
 
   if (has(OPT.needs.food) || has(OPT.needs.cash)) {
     visible.push(question('benefits'))
@@ -187,7 +179,6 @@ export type Profile = {
   children: boolean
   county?: string
   urgency?: 'tonight' | 'days' | 'weeks' | 'later'
-  transport?: 'ok' | 'help' | 'no'
   getsFood: boolean
   getsCash: boolean
   waiting: boolean
@@ -222,7 +213,6 @@ export const toProfile = (answers: AnswerMap): Profile => {
     children: kids,
     county: COUNTY_OPTIONS.includes(answers.county?.[0] ?? '') ? answers.county?.[0] : undefined,
     urgency: keyOf(OPT.urgency, answers.urgency?.[0]),
-    transport: keyOf(OPT.transport, answers.transport?.[0]),
     getsFood: benefits.includes(OPT.benefits.food),
     getsCash: benefits.includes(OPT.benefits.cash),
     waiting: benefits.includes(OPT.benefits.waiting),

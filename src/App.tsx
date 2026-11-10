@@ -10,13 +10,13 @@ import {
 import { OPT } from './options'
 
 const DOCUMENT_BOXES = [
-  { key: 'required', title: 'Bring or have ready', className: 'required' },
-  { key: 'helpful', title: 'Helpful to have', className: 'helpful' },
-  { key: 'alternativesToConfirm', title: 'Ask to confirm', className: 'confirm' },
-  { key: 'unverified', title: 'Keep in mind', className: 'caution' },
+  { key: 'required', title: 'Have these ready', className: 'required' },
+  { key: 'helpful', title: 'Nice to have', className: 'helpful' },
+  { key: 'alternativesToConfirm', title: 'Ask about these', className: 'confirm' },
+  { key: 'unverified', title: 'Please remember', className: 'caution' },
 ] as const
 
-const PLAN_TITLE = 'Your next steps'
+const PLAN_TITLE = 'Your plan'
 function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [answers, setAnswers] = useState<AnswerMap>({})
@@ -111,7 +111,7 @@ function App() {
       <header className="top-bar">
         <h1>Washington Support Steps</h1>
         <p>
-          Housing, food, documents, school and immigration resources in Western Washington.
+          Find help with housing, food, papers, school, and immigration in Western Washington.
         </p>
         <div className="safety-actions">
           <button
@@ -119,27 +119,26 @@ function App() {
             className="leave-button"
             onClick={() => window.location.replace('https://www.weather.gov/')}
           >
-            Leave this page
+            Leave this page now
           </button>
           <button
             type="button"
             className="link-button"
             onClick={() => setShowSafetyDetails((value) => !value)}
           >
-            Privacy &amp; safety
+            Privacy and safety
           </button>
         </div>
         {showSafetyDetails && (
           <div className="notice" role="note">
             <p>
-              This button does not erase browser history. A shared device may still show visited
-              pages. Consider using private browsing and clearing history when it is safe to do so.
+              The leave button does not erase your history. Someone using the same device may still
+              see the pages you visited. A private window can help.
             </p>
             <p>
-              This tool does not store your answers in accounts, analytics, cookies, or local
-              storage.
+              We do not save your answers. We do not use accounts or tracking.
             </p>
-            <p>Other websites may ask for personal information and have their own privacy policies.</p>
+            <p>Other websites may ask for your personal information. They have their own privacy rules.</p>
           </div>
         )}
       </header>
@@ -149,7 +148,7 @@ function App() {
           {question && (
             <>
               <div className="progress-row">
-                <p>Question {safeQuestionIndex + 1}</p>
+                <p>Question {safeQuestionIndex + 1} of {visibleQuestions.length}</p>
               </div>
               <h2 ref={headingRef} tabIndex={-1}>{question.prompt}</h2>
               {question.helperText && <p className="helper-text">{question.helperText}</p>}
@@ -185,8 +184,8 @@ function App() {
                 </button>
                 <button type="button" onClick={onContinue} disabled={!canContinue}>
                   {safeQuestionIndex === visibleQuestions.length - 1
-                    ? 'View my plan'
-                    : 'Continue →'}
+                    ? 'See my plan'
+                    : 'Next →'}
                 </button>
               </div>
             </>
@@ -195,12 +194,11 @@ function App() {
       ) : (
         <main className="results-shell">
           <h2 ref={headingRef} tabIndex={-1}>{PLAN_TITLE}</h2>
-          <p className="intro">Use a contact method only if it is safe for you.</p>
+          <p className="intro">Only contact people in a way that is safe for you.</p>
 
           {!activeCard && (
             <p className="notice-inline">
-              We could not match any steps to your answers. Go back to the questions and choose at
-              least one topic, or ask a local advocate or provider where to start.
+              We could not find steps for your answers. Go back and pick at least one topic. You can also ask a local helper where to start.
             </p>
           )}
 
@@ -208,7 +206,7 @@ function App() {
             <section className="slide-card" aria-live="polite">
               <div className="slide-header">
                 <p>
-                  Step {safeSlideIndex + 1} of {planCards.length}
+                  Part {safeSlideIndex + 1} of {planCards.length}
                 </p>
                 <p className={`category ${activeCard.category}`}>{activeCard.category.toUpperCase()}</p>
               </div>
@@ -219,7 +217,7 @@ function App() {
                 </p>
               )}
 
-              <h4>Steps</h4>
+              <h4>What to do</h4>
               <ol className="action-steps">
                 {activeCard.steps.map((step) => (
                   <li key={step}>{step}</li>
@@ -250,7 +248,7 @@ function App() {
                 <div className="supporting-message">
                   {activeCard.missingDocsPlan && (
                     <p>
-                      <strong>Next action:</strong> {activeCard.missingDocsPlan}
+                      <strong>Next:</strong> {activeCard.missingDocsPlan}
                     </p>
                   )}
                   {activeCard.endGoal && (
@@ -278,12 +276,12 @@ function App() {
                       )}
                       {resource.phone && <p className="resource-phone">{resource.phone}</p>}
                       <p className="resource-meta">
-                        {resource.verificationStatus === 'Verified' ? 'Last verified' : 'Source checked'}: {resource.lastVerified}
+                        {resource.verificationStatus === 'Verified' ? 'Last checked' : 'Last looked at'}: {resource.lastVerified}
                       </p>
                       {resource.note && <p className="resource-note">{resource.note}</p>}
                       {resource.requiresWalkthrough && resource.walkthrough && (
                         <details className="summary-panel walkthrough-panel">
-                          <summary>View visual walkthrough</summary>
+                          <summary>See pictures of each step</summary>
                           <div className="summary-panel-content">
                             <VisualWalkthrough walkthrough={resource.walkthrough} />
                           </div>
@@ -305,7 +303,7 @@ function App() {
               disabled={safeSlideIndex === 0}
               onClick={() => setCurrentSlideIndex(Math.max(safeSlideIndex - 1, 0))}
             >
-              ← Previous slide
+              ← Back
             </button>
             <button
               type="button"
@@ -314,12 +312,12 @@ function App() {
                 setCurrentSlideIndex(Math.min(safeSlideIndex + 1, planCards.length - 1))
               }
             >
-              Next slide →
+              Next →
             </button>
           </div>
 
           <details className="summary-panel overview-panel">
-            <summary>See all steps</summary>
+            <summary>See all parts of my plan</summary>
             <div className="summary-panel-content">
               <section className="section-overview">
                 <ul>
@@ -336,14 +334,14 @@ function App() {
           </details>
 
           <details className="summary-panel">
-            <summary>Review my answers</summary>
+            <summary>See my answers</summary>
             <div className="summary-panel-content">
               <section className="answers-review">
                 <ul>
                   {visibleQuestions.map((item) => (
                     <li key={item.id}>
                       <p>{item.prompt}</p>
-                      <p>{(activeAnswers[item.id]?.length ? activeAnswers[item.id] : ['No answer recorded']).join(', ')}</p>
+                      <p>{(activeAnswers[item.id]?.length ? activeAnswers[item.id] : ['No answer']).join(', ')}</p>
                     </li>
                   ))}
                 </ul>
@@ -352,7 +350,7 @@ function App() {
           </details>
 
           <details className="summary-panel">
-            <summary>Items still needing manual verification</summary>
+            <summary>Things we are still checking</summary>
             <div className="summary-panel-content">
               <section className="manual-review">
                 <ul>
@@ -366,7 +364,7 @@ function App() {
 
           <div className="results-footer">
             <button type="button" className="secondary" onClick={onBack}>
-              Back to questions
+              Change my answers
             </button>
             <button type="button" onClick={onStartOver}>
               Start over
@@ -374,15 +372,14 @@ function App() {
           </div>
 
           <p className="disclaimer">
-            Resources and requirements can change. Confirm details before sharing information or paying fees.
-            Some visual guides are still being reviewed.
+            Rules and contact details can change. Check them before you share information or pay money. Some picture guides are still being checked.
           </p>
           <a
             href="https://github.com/sv2026/skills-copilot-codespaces-vscode/issues/new?title=Outdated%20resource%20information&body=Please%20describe%20which%20resource%20or%20requirement%20needs%20review.%20Do%20not%20include%20personal%20information."
             target="_blank"
             rel="noreferrer"
           >
-            Report outdated information
+            Tell us if something is wrong
           </a>
         </main>
       )}

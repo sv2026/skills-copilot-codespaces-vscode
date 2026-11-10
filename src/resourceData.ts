@@ -183,8 +183,8 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
 }
 
 export const REVIEW_NEEDED_ITEMS = [
-  'County housing access points were found on official county or lead-agency pages on 2026-11-03. Confirm each before launch.',
+  'County housing access points were found on official county or lead-agency pages on 2026-11-03. Check each one before you use it.',
   'San Juan County has no confirmed access point yet.',
-  'Wait times, eligibility, and document requirements for shelters were not verified.',
-  'Screenshot walkthroughs not yet reviewed by a person are labeled "needs review".',
+  'We did not check shelter wait times, who can stay, or what papers you need.',
+  'Picture guides that a person has not checked yet say "needs review".',
 ]
