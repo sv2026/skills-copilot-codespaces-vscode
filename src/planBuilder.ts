@@ -79,10 +79,6 @@ const shelterCard = (p: Profile): ActionCard => {
       ? `Find housing in ${p.county}` : 'Find housing near you',
     category: p.urgency === 'tonight' || p.urgency === 'days' ? 'immediate' : 'next',
     steps,
-    usefulDocuments: {
-      required: [], helpful: [], alternativesToConfirm: ['Ask what information they need and what can wait.'],
-      unverified: ['Space, how to sign up, and who can get help all need to be checked.'],
-    },
     resources: [entryResource],
   })
 }
@@ -99,11 +95,10 @@ const foodNowCard = (): ActionCard => card({
 
 const benefitResources = (): [LinkResource, ResourceLink] => [washingtonConnection, dshsPhone]
 
-const benefitSteps = (p: Profile, benefit: string) => [
+const benefitSteps = (p: Profile) => [
   ...(p.immigration && p.immigrationHelp === 'benefits'
     ? ['You can ask an immigration lawyer how applying could affect you.']
     : []),
-  `Apply for ${benefit} on Washington Connection. You can also ask DSHS about other ways to apply.`,
 ]
 
 const benefitCard = (p: Profile, kind: 'food' | 'cash'): ActionCard => card({
@@ -111,7 +106,8 @@ const benefitCard = (p: Profile, kind: 'food' | 'cash'): ActionCard => card({
   title: kind === 'food' ? 'Apply for food help' : 'Apply for cash help',
   category: 'immediate',
   steps: [
-    ...benefitSteps(p, kind === 'food' ? 'Basic Food' : 'cash assistance'),
+    ...benefitSteps(p),
+    `Use a link below to apply for ${kind === 'food' ? 'Basic Food' : 'cash help'}.`,
     ...(kind === 'food' ? ['Ask DSHS about fast help. You may not get help today.'] : []),
     'Ask what proof you need and what can wait.',
   ],
@@ -152,8 +148,7 @@ const idCard = (p: Profile): ActionCard => card({
   ],
   usefulDocuments: {
     required: [], helpful: ['Your mailing address'],
-    alternativesToConfirm: ['Ask DOL what proof of who you are they accept.'],
-    unverified: ['Fees and rules can change. Check the DOL page.'],
+    alternativesToConfirm: [], unverified: [],
   },
   resources: [
     link('Replace an ID card', 'https://dol.wa.gov/id-cards/replace-id-card',
@@ -198,7 +193,6 @@ const ssnCard = (kids: boolean): ActionCard => card({
   category: 'next',
   steps: [
     'Ask if you really need a new card. You may only need to know your number.',
-    'Read the note under each link and open the one that fits.',
     ...(kids ? ['Ask what proof you need to show who the child is and that you are the parent.'] : []),
   ],
   resources: [
