@@ -227,6 +227,9 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
 .walkthrough-summary, .walkthrough-warning { padding: 0.8rem; border-radius: 0.6rem; background: #eef4ed; }
 .walkthrough-step-list { display: grid; gap: 0.8rem; padding-left: 1.4rem; }
 .walkthrough-step { padding: 1rem; border: 1px solid var(--line); border-radius: 0.7rem; background: #fff; }
+.walkthrough-prep { margin: 1rem 0; padding: 1rem 1.25rem; border: 2px solid #447b64; border-radius: 0.7rem; background: #e9f2e8; }
+.walkthrough-prep h6 { margin: 0 0 0.5rem; font-size: 1.3rem; }
+.walkthrough-prep ul { margin: 0; padding-left: 1.3rem; font-size: 1.1rem; }
 .walkthrough-step h6 { margin: 0; font-size: 1.25rem; }
 .walkthrough-step-status { color: var(--muted); font-size: 0.95rem; }
 .walkthrough-figure { margin: 1rem 0; }

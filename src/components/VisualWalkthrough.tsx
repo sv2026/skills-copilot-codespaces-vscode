@@ -28,6 +28,16 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
           These pictures may be old. {walkthrough.outdatedReason}
         </p>
       )}
+      {walkthrough.beforeYouStart && (
+        <div className="walkthrough-prep">
+          <h6>Have these ready before you start</h6>
+          <ul>
+            {walkthrough.beforeYouStart.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       <ol className="walkthrough-step-list">
         {walkthrough.steps.map((step, index) => (
           <li key={step.id} className="walkthrough-step">

@@ -23,6 +23,15 @@ aiSupportNotes: [
 ],
 summary:
   'These pictures show where to start. The first picture is the page that tells you what to get ready. The second is where you pick Basic Food. Finish the rest on the official website.',
+beforeYouStart: [
+  'Name and date of birth for each person in your home',
+  'Social Security number for each person who has one',
+  'Citizenship or immigration status',
+  'Income, such as pay or other money you get',
+  'Savings and other things you own that are worth money',
+  'Rent or housing costs, utilities, and child care costs',
+  'The application takes about 60 minutes. You can save and finish later.',
+],
 steps: [
   {
     id: 'wa-connection-application-introduction',
@@ -86,6 +95,15 @@ aiSupportNotes: [
 ],
 summary:
   'These pictures show where to start. First read the Washington Department of Health page. Then open the VitalChek page to order. The order form asks for personal information, so we do not show it.',
+beforeYouStart: [
+  'The full name of the person on the birth certificate (first, middle, last)',
+  'Their date of birth',
+  'The city or county where they were born in Washington',
+  'The first and last names of all parents on the record',
+  'Your ID: a valid government ID, or another kind the state accepts',
+  'Proof of how you are related, if you are not ordering your own',
+  'A way to pay. Fees start at $25. Some people can get one for free.',
+],
 steps: [
   {
     id: 'doh-birth-record-overview',
@@ -154,6 +172,12 @@ export const SSA_CARD_WALKTHROUGH: VisualWalkthrough = {
   ],
   summary:
     'This page tells you which papers to have before you apply. Read it first. Apply Now starts the real application and asks for personal information.',
+  beforeYouStart: [
+    'Papers must be originals or certified copies.',
+    'Papers must not be expired.',
+    'Papers must show your name and date of birth.',
+    'Click "Check which documents you need before applying" on the official page to see the full list.',
+  ],
   steps: [
     ssaStep(
       'ssa-card-start-page',
