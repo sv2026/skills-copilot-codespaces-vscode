@@ -151,6 +151,7 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
   },
   'Mason County': {
     label: 'Turning Pointe Survivor Advocacy (24-hour crisis line)',
+    url: 'https://turningpointe.org/',
     phone: '360-432-1212',
     note: 'For people unsafe at home. Call or text. Main number: 360-426-1216.',
   },
