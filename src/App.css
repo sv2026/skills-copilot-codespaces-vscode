@@ -239,3 +239,13 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
   .wizard-actions button, .slide-controls button, .results-footer button { flex: 1 1 10rem; }
   .wizard-card, .results-shell { border-radius: 1.15rem; }
 }
+
+.emergency-box {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 2px solid #c9aa98;
+  border-radius: 1.15rem;
+  background: #f7f0e9;
+}
+.emergency-box h2 { margin: 0 0 0.75rem; font-size: 1.6rem; }
+.emergency-box ul { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; font-size: 1.15rem; }
