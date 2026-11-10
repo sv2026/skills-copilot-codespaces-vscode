@@ -51,12 +51,6 @@ const familyDirectory = link(
   'This list is for all of Washington. Ask each place if it is open and has room.',
 )
 
-const travelNote = (p: Profile): string[] => {
-  if (p.transport === 'help') return ['Ask if they can help with a ride before you go.']
-  if (p.transport === 'no') return ['You said you cannot travel. Ask if you can do these steps without going in person.']
-  return []
-}
-
 const shelterCard = (p: Profile): ActionCard => {
   const entry = p.county ? COUNTY_ENTRY_POINTS[p.county] : undefined
   const entryResource: LinkResource = entry?.url
@@ -76,7 +70,6 @@ const shelterCard = (p: Profile): ActionCard => {
   else if (p.urgency === 'weeks') steps.push('Ask what choices you have in the next few weeks and how to apply.')
   else if (p.urgency === 'later') steps.push('Ask about housing for later and how to apply.')
   if (p.children) steps.push('Say that your children need a place too.')
-  steps.push(...travelNote(p))
   return card({
     id: 'shelter-entry',
     title: p.county && !['Other / not listed', "I'm not sure"].includes(p.county)
@@ -91,13 +84,12 @@ const shelterCard = (p: Profile): ActionCard => {
   })
 }
 
-const foodNowCard = (p: Profile): ActionCard => card({
+const foodNowCard = (): ActionCard => card({
   id: 'food-now',
   title: 'Find food near you',
   category: 'immediate',
   steps: [
     'Use the food list to find food near you. Ask the place about its hours and how to get food.',
-    ...(p.transport === 'no' ? ['We have not checked if food can be delivered.'] : travelNote(p)),
   ],
   resources: [foodDirectory],
 })
@@ -109,7 +101,6 @@ const benefitSteps = (p: Profile, benefit: string) => [
     ? ['You can ask an immigration lawyer how applying could affect you.']
     : []),
   `Apply for ${benefit} on Washington Connection. You can also ask DSHS about other ways to apply.`,
-  ...travelNote(p),
 ]
 
 const benefitCard = (p: Profile, kind: 'food' | 'cash'): ActionCard => card({
@@ -134,7 +125,6 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
       ...(!p.pendingBenefits || p.pendingBenefits === 'unsure'
         ? ['Find out what you applied for before you apply again.'] : []),
       'Ask what to do if you can\'t safely give them something they ask for.',
-      ...travelNote(p),
     ],
     resources: benefitResources(),
   })
@@ -145,7 +135,6 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
     steps: [
       'Look at your case on Washington Connection, or ask DSHS about your help.',
       'Ask how to get mail and messages safely. Ask if you need to update anything.',
-      ...travelNote(p),
     ],
     resources: benefitResources(),
   })
@@ -156,15 +145,11 @@ const idCard = (p: Profile): ActionCard => card({
   id: 'photo-id', title: 'Replace your photo ID', category: p.shelter ? 'next' : 'immediate',
   steps: [
     'Find out what proof and fees you need to replace your ID.',
-    ...(p.transport === 'no'
-      ? ['You can\'t travel. We have not checked if you can replace it without going in.']
-      : ['Ask if you must go to an office.']),
-    ...travelNote(p),
   ],
   resources: [link('Washington DOL ID information', 'https://dol.wa.gov/id-cards/id-help-unhoused', 'Check eligibility for reduced-fee ID.')],
 })
 
-const birthCard = (p: Profile, kids: boolean): ActionCard => {
+const birthCard = (kids: boolean): ActionCard => {
   const birthResource: LinkResource = {
     label: 'Washington birth records',
     url: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
@@ -178,7 +163,6 @@ const birthCard = (p: Profile, kids: boolean): ActionCard => {
     steps: [
       kids ? 'Find out where each child was born.' : 'Find out where you were born.',
       'Use that state’s birth records office. Ask what ID they take, what it costs, and other ways to get it.',
-      ...travelNote(p),
     ],
     resources: [
       birthResource,
@@ -187,7 +171,7 @@ const birthCard = (p: Profile, kids: boolean): ActionCard => {
   })
 }
 
-const ssnCard = (p: Profile, kids: boolean): ActionCard => card({
+const ssnCard = (kids: boolean): ActionCard => card({
   id: kids ? 'ssa-cards-children' : 'ssa-cards-self',
   title: kids ? "Replace children's Social Security cards" : 'Replace your Social Security card',
   category: 'next',
@@ -195,7 +179,6 @@ const ssnCard = (p: Profile, kids: boolean): ActionCard => card({
     'Ask if you really need a new card.',
     'Read how Social Security replaces cards, what ID they take, and if you can do it online.',
     ...(kids ? ['Ask what proof you need to show who the child is and that you are the parent.'] : []),
-    ...travelNote(p),
   ],
   resources: [
     link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Social Security may ask for personal information. You may need to go to an office.'),
@@ -246,7 +229,6 @@ const immigrationCard = (p: Profile): ActionCard => {
       topic[p.immigrationHelp ?? 'unsure'],
       'Ask how to reach them and how to make an appointment.',
       'Before you share anything, ask what they need and how they will use it.',
-      ...travelNote(p),
     ],
     resources: [
       link('Northwest Immigrant Rights Project', 'https://www.nwirp.org/', 'Check how to reach them and when they are open.'),
@@ -268,7 +250,7 @@ const guidanceCard = (kids: boolean): ActionCard => card({
 export const buildCards = (p: Profile): ActionCard[] => {
   const cards: ActionCard[] = []
   if (p.shelter) cards.push(shelterCard(p))
-  if (p.food) cards.push(foodNowCard(p))
+  if (p.food) cards.push(foodNowCard())
   if (p.immigration && p.immigrationHelp === 'benefits') cards.push(immigrationCard(p))
 
   if (p.food || p.cash) {
@@ -283,12 +265,12 @@ export const buildCards = (p: Profile): ActionCard[] => {
   if (p.school) cards.push(schoolCard(p))
   if (p.docs) {
     if (p.docAnswered('photoId') && !p.hasDoc('photoId')) cards.push(idCard(p))
-    if (p.docAnswered('birth') && !p.hasDoc('birth')) cards.push(birthCard(p, false))
-    if (p.docAnswered('ssn') && !p.hasDoc('ssn')) cards.push(ssnCard(p, false))
+    if (p.docAnswered('birth') && !p.hasDoc('birth')) cards.push(birthCard(false))
+    if (p.docAnswered('ssn') && !p.hasDoc('ssn')) cards.push(ssnCard(false))
   }
   if (p.kidsDocs) {
-    if (p.docAnswered('kidsBirth') && !p.hasDoc('kidsBirth')) cards.push(birthCard(p, true))
-    if (p.docAnswered('kidsSsn') && !p.hasDoc('kidsSsn')) cards.push(ssnCard(p, true))
+    if (p.docAnswered('kidsBirth') && !p.hasDoc('kidsBirth')) cards.push(birthCard(true))
+    if (p.docAnswered('kidsSsn') && !p.hasDoc('kidsSsn')) cards.push(ssnCard(true))
   }
   if (p.immigration && p.immigrationHelp !== 'benefits') cards.push(immigrationCard(p))
   if (p.kidsUnsure && !p.school && !p.kidsDocs) cards.push(guidanceCard(true))

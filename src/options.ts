@@ -19,11 +19,6 @@ export const OPT = {
     weeks: 'In a few weeks',
     later: 'Not now. I have a place for now',
   },
-  transport: {
-    ok: 'Yes',
-    help: 'Only if I get help with a ride',
-    no: 'No, I can\'t travel',
-  },
   benefits: {
     food: 'I get food help (Basic Food/EBT)',
     cash: 'I get cash help',

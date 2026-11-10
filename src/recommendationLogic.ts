@@ -69,12 +69,6 @@ export const QUESTIONS: Question[] = [
     options: values(OPT.urgency),
   },
   {
-    id: 'transport',
-    prompt: 'Can you go to an office or shelter?',
-    multiSelect: false,
-    options: values(OPT.transport),
-  },
-  {
     id: 'benefits',
     prompt: 'Do you get any of these, or have you applied?',
     helperText: 'Pick all that apply.',
@@ -136,8 +130,6 @@ export const buildVisibleQuestions = (answers: AnswerMap): Question[] => {
     visible.push(question('urgency'))
   }
 
-  visible.push(question('transport'))
-
   if (has(OPT.needs.food) || has(OPT.needs.cash)) {
     visible.push(question('benefits'))
     if (answers.benefits?.includes(OPT.benefits.waiting)) {
@@ -187,7 +179,6 @@ export type Profile = {
   children: boolean
   county?: string
   urgency?: 'tonight' | 'days' | 'weeks' | 'later'
-  transport?: 'ok' | 'help' | 'no'
   getsFood: boolean
   getsCash: boolean
   waiting: boolean
@@ -222,7 +213,6 @@ export const toProfile = (answers: AnswerMap): Profile => {
     children: kids,
     county: COUNTY_OPTIONS.includes(answers.county?.[0] ?? '') ? answers.county?.[0] : undefined,
     urgency: keyOf(OPT.urgency, answers.urgency?.[0]),
-    transport: keyOf(OPT.transport, answers.transport?.[0]),
     getsFood: benefits.includes(OPT.benefits.food),
     getsCash: benefits.includes(OPT.benefits.cash),
     waiting: benefits.includes(OPT.benefits.waiting),

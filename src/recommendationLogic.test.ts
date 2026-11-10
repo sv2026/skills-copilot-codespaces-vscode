@@ -47,67 +47,56 @@ describe('questions', () => {
 
   describe('scenario coverage', () => {
     const scenarios: { name: string; answers: AnswerMap; expected: string[]; absent?: string[] }[] = [
-      { name: '1 Clark: tonight, food, online and transport help', answers: {
+      { name: '1 Clark: tonight, food, online', answers: {
         needs: [OPT.needs.shelter, OPT.needs.food, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Clark County'],
-        urgency: [OPT.urgency.tonight], transport: [OPT.transport.help], benefits: [OPT.benefits.none],
+        urgency: [OPT.urgency.tonight], benefits: [OPT.benefits.none],
       }, expected: ['shelter-entry', 'food-now', 'dshs-food-assistance', 'children-unsure'] },
       { name: '2 Snohomish: housing and enrollment', answers: {
         needs: [OPT.needs.shelter, OPT.needs.kids], kidsNeeds: [OPT.kids.school], county: ['Snohomish County'],
-        urgency: [OPT.urgency.days], transport: [OPT.transport.ok],
+        urgency: [OPT.urgency.days],
         docs: [OPT.docs.none], schoolNeeds: [OPT.school.enroll, OPT.school.records],
       }, expected: ['shelter-entry', 'school-liaison'], absent: ['birth-records-children'] },
       { name: '3 King: school with records', answers: {
-        needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.school], county: ['King County'],
-        transport: [OPT.transport.no], docs: [OPT.docs.kidsBirth, OPT.docs.kidsSchool],
+        needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.school], county: ['King County'], docs: [OPT.docs.kidsBirth, OPT.docs.kidsSchool],
         schoolNeeds: [OPT.school.stay, OPT.school.rides, OPT.school.meals],
       }, expected: ['school-support'], absent: ['shelter-entry', 'birth-records-children'] },
       { name: '4 Whatcom: food benefits already received', answers: {
-        needs: [OPT.needs.food], county: ['Whatcom County'],
-        transport: [OPT.transport.ok], benefits: [OPT.benefits.food],
+        needs: [OPT.needs.food], county: ['Whatcom County'], benefits: [OPT.benefits.food],
       }, expected: ['food-now', 'dshs-update'], absent: ['dshs-food-assistance'] },
       { name: '5 Pierce: cash application pending, type unknown', answers: {
-        needs: [OPT.needs.cash, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Pierce County'],
-        transport: [OPT.transport.ok], benefits: [OPT.benefits.waiting], pendingBenefits: [OPT.pending.unsure],
+        needs: [OPT.needs.cash, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Pierce County'], benefits: [OPT.benefits.waiting], pendingBenefits: [OPT.pending.unsure],
       }, expected: ['dshs-pending'], absent: ['dshs-cash-assistance'] },
       { name: '6 Thurston: food benefit and cash', answers: {
-        needs: [OPT.needs.food, OPT.needs.cash], county: ['Thurston County'],
-        transport: [OPT.transport.help], benefits: [OPT.benefits.food],
+        needs: [OPT.needs.food, OPT.needs.cash], county: ['Thurston County'], benefits: [OPT.benefits.food],
       }, expected: ['food-now', 'dshs-update', 'dshs-cash-assistance'], absent: ['dshs-food-assistance'] },
       { name: '7 Kitsap: ID and personal SS card', answers: {
-        needs: [OPT.needs.docs], county: ['Kitsap County'],
-        transport: [OPT.transport.no], docs: [OPT.docs.birth],
+        needs: [OPT.needs.docs], county: ['Kitsap County'], docs: [OPT.docs.birth],
       }, expected: ['photo-id', 'ssa-cards-self'], absent: ['birth-records-self'] },
       { name: '8 Island: children’s SS cards only', answers: {
-        needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.docs], county: ['Island County'],
-        transport: [OPT.transport.ok], docs: [OPT.docs.kidsBirth],
+        needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.docs], county: ['Island County'], docs: [OPT.docs.kidsBirth],
       }, expected: ['ssa-cards-children'], absent: ['birth-records-children', 'school-support', 'photo-id'] },
       { name: '9 Mason: housing and unavailable documents', answers: {
         needs: [OPT.needs.shelter, OPT.needs.docs, OPT.needs.kids], kidsNeeds: [OPT.kids.docs], county: ['Mason County'],
-        urgency: [OPT.urgency.weeks], transport: [OPT.transport.help], docs: [OPT.docs.none],
+        urgency: [OPT.urgency.weeks], docs: [OPT.docs.none],
       }, expected: ['shelter-entry', 'photo-id', 'birth-records-self', 'ssa-cards-self', 'birth-records-children', 'ssa-cards-children'] },
       { name: '10 Skagit: immigration options online', answers: {
-        needs: [OPT.needs.immigration], county: ['Skagit County'],
-        transport: [OPT.transport.no], immigrationHelp: [OPT.immigration.options],
+        needs: [OPT.needs.immigration], county: ['Skagit County'], immigrationHelp: [OPT.immigration.options],
       }, expected: ['immigration-support'] },
       { name: '11 Grays Harbor: immigration forms and cash', answers: {
-        needs: [OPT.needs.immigration, OPT.needs.cash, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Grays Harbor County'],
-        transport: [OPT.transport.ok], benefits: [OPT.benefits.none], immigrationHelp: [OPT.immigration.forms],
+        needs: [OPT.needs.immigration, OPT.needs.cash, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Grays Harbor County'], benefits: [OPT.benefits.none], immigrationHelp: [OPT.immigration.forms],
       }, expected: ['immigration-support', 'dshs-cash-assistance'] },
       { name: '12 Jefferson: immigration papers, in person', answers: {
-        needs: [OPT.needs.immigration, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Jefferson County'],
-        transport: [OPT.transport.help], immigrationHelp: [OPT.immigration.papers],
+        needs: [OPT.needs.immigration, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Jefferson County'], immigrationHelp: [OPT.immigration.papers],
       }, expected: ['immigration-support'] },
       { name: '13 Whatcom: immigration benefits concern', answers: {
-        needs: [OPT.needs.food, OPT.needs.cash, OPT.needs.immigration], county: ['Whatcom County'],
-        transport: [OPT.transport.no], benefits: [OPT.benefits.none], immigrationHelp: [OPT.immigration.benefits],
+        needs: [OPT.needs.food, OPT.needs.cash, OPT.needs.immigration], county: ['Whatcom County'], benefits: [OPT.benefits.none], immigrationHelp: [OPT.immigration.benefits],
       }, expected: ['food-now', 'immigration-support', 'dshs-food-assistance', 'dshs-cash-assistance'] },
       { name: '14 San Juan: explicit housing and pending benefit', answers: {
         needs: [OPT.needs.unsure, OPT.needs.shelter, OPT.needs.food], county: ['San Juan County'],
-        urgency: [OPT.urgency.tonight], transport: [OPT.transport.no], benefits: [OPT.benefits.waiting],
+        urgency: [OPT.urgency.tonight], benefits: [OPT.benefits.waiting],
       }, expected: ['shelter-entry', 'food-now', 'dshs-pending', 'choose-priorities'], absent: ['dshs-food-assistance'] },
       { name: '15 unknown: children’s needs uncertain', answers: {
         needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ["I'm not sure"],
-        transport: [OPT.transport.no],
       }, expected: ['children-unsure'], absent: ['school-support', 'birth-records-children'] },
     ]
 
@@ -188,7 +177,6 @@ describe('personas', () => {
       needs: [OPT.needs.shelter],
       county: ['King County'],
       urgency: [OPT.urgency.tonight],
-      transport: [OPT.transport.ok],
     }
     expect(cards(a)[0].id).toBe('shelter-entry')
     expect(cards(a)[0].category).toBe('immediate')
@@ -201,7 +189,6 @@ describe('personas', () => {
       needs: [OPT.needs.shelter],
       county: ['Snohomish County'],
       urgency: [OPT.urgency.days],
-      transport: [OPT.transport.ok],
     }
     expect(steps({ ...base, needs: [OPT.needs.shelter, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure] }, 'shelter-entry')).toContain('children')
     expect(steps({ ...base, children: ['Yes'] }, 'shelter-entry')).not.toContain('children')
@@ -244,14 +231,6 @@ describe('personas', () => {
     const resource = cards(a).find((card) => card.id === 'dshs-food-assistance')?.resources[0]
     expect(resource?.url).toBe('https://www.washingtonconnection.org/')
     expect(steps(a, 'dshs-food-assistance')).not.toMatch(/call/i)
-  })
-
-  it('transport answers change the steps', () => {
-    const a = (transport: string) =>
-      steps({ needs: [OPT.needs.food], benefits: [OPT.benefits.none], transport: [transport] }, 'dshs-food-assistance')
-    expect(a(OPT.transport.help)).toContain('help with a ride')
-    expect(a(OPT.transport.no)).toContain('cannot travel')
-    expect(a(OPT.transport.ok)).not.toContain('help with a ride')
   })
 
   it('documents: only missing documents get cards', () => {
