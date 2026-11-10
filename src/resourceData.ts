@@ -53,6 +53,7 @@ export type VisualWalkthrough = {
   outdatedReason?: string
   aiSupportNotes: string[]
   summary?: string
+  beforeYouStart?: string[]
   steps: WalkthroughStep[]
 }
 
@@ -126,9 +127,10 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
     note: 'Listed by the provider, not on a county page.',
   },
   'Island County': {
-    label: 'Island County Housing Support Center',
+    label: 'Whidbey Homeless Coalition (The Haven and House of Hope)',
+    phone: '360-900-3077',
     url: 'https://www.islandcountywa.gov/890/Housing-Support-Center',
-    note: 'No intake phone confirmed on the county page.',
+    note: 'The Haven is a year-round overnight shelter. Sign up each day at SPiN Cafe in Oak Harbor from 3:45 to 4:00 PM, or call 360-708-4533. House of Hope in Langley has housing for up to 90 days.',
   },
   'Clark County': {
     label: 'Clark County Housing Solutions Center',
@@ -150,7 +152,7 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
   'Mason County': {
     label: 'Mason County housing and homelessness',
     url: 'https://masoncountywa.gov/departments/public_health/community_health_and_human_services/housing_homelessness.php',
-    note: 'County page lists a North Mason number that looks wrong, so no phone is shown.',
+    note: 'Unsafe at home? Turning Pointe Survivor Advocacy has a 24-hour crisis line. Call or text 360-432-1212. Main number: 360-426-1216.',
   },
   'Jefferson County': {
     label: 'Jefferson County housing services (OlyCAP)',
@@ -176,9 +178,10 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
     note: 'County website page was unavailable when checked.',
   },
   'Wahkiakum County': {
-    label: 'Wahkiakum County community assistance',
-    url: 'https://www.co.wahkiakum.wa.us/244/Community-Assistance',
-    note: 'No phone confirmed on the county page.',
+    label: 'Wahkiakum County emergency shelter',
+    phone: '360-795-8630, option 4',
+    url: 'https://www.co.wahkiakum.wa.us/541/Emergency-Shelter',
+    note: 'Call the Community Outreach Specialist. Shelter space is very limited.',
   },
 }
 
