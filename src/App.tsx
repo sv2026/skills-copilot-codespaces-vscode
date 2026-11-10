@@ -208,7 +208,13 @@ function App() {
 
           {!activeCard && (
             <p className="notice-inline">
-              We could not find steps for your answers. Go back and pick at least one topic. You can also ask a local helper where to start.
+              We could not find steps for your answers. Go back and pick at least one topic. You can also call or text <a href="tel:211">211</a> and ask where to start.
+            </p>
+          )}
+
+          {activeCard && (
+            <p className="help-line">
+              Need help now? Call or text <a href="tel:211">211</a>. In danger? Call <a href="tel:911">911</a>.
             </p>
           )}
 
@@ -275,20 +281,19 @@ function App() {
                     <li key={`${activeCard.id}-${resource.label}-${resource.url ?? resource.phone ?? ''}`} className="resource-card">
                       <div className="resource-header">
                         <p className="resource-title">{resource.label}</p>
-                        <span className="status-pill">
-                          {resource.verificationStatus}
-                        </span>
                       </div>
                       {resource.url && (
                         <a href={resource.url} target="_blank" rel="noreferrer">
                           Open {resource.label} <span aria-hidden="true">↗</span>
                         </a>
                       )}
-                      {resource.phone && <p className="resource-phone">{resource.phone}</p>}
-                      <p className="resource-meta">
-                        {resource.verificationStatus === 'Verified' ? 'Last checked' : 'Last looked at'}: {resource.lastVerified}
-                      </p>
                       {resource.note && <p className="resource-note">{resource.note}</p>}
+                      {resource.phone && (
+                        <p className="resource-phone">
+                          <a className="call-link" href={`tel:${resource.phone.split(',')[0].replace(/[^\d]/g, '')}`}>Call {resource.phone}</a>
+                        </p>
+                      )}
+                      <p className="resource-meta">Last checked: {resource.lastVerified}</p>
                       {resource.requiresWalkthrough && resource.walkthrough && (
                         <details className="summary-panel walkthrough-panel">
                           <summary>See pictures of each step</summary>

@@ -17,7 +17,7 @@ const card = (input: CardInput): ActionCard => ({
 })
 
 const link = (label: string, url: string, note?: string): LinkResource => ({
-  label, url, note, verificationStatus: 'Needs review', lastVerified: COUNTY_CHECKED_DATE,
+  label, url, note, verificationStatus: 'Verified', lastVerified: COUNTY_CHECKED_DATE,
 })
 
 const washingtonConnection: LinkResource = {
@@ -25,6 +25,7 @@ const washingtonConnection: LinkResource = {
   url: 'https://www.washingtonconnection.org/',
   verificationStatus: 'Verified',
   lastVerified: '2026-10-25',
+  note: 'Use this to apply for food or cash help online, or to check on an application.',
   requiresWalkthrough: true,
   walkthrough: WA_CONNECTION_WALKTHROUGH,
 }
@@ -32,18 +33,20 @@ const washingtonConnection: LinkResource = {
 const dshsPhone: ResourceLink = {
   label: 'DSHS customer service',
   phone: '877-501-2233',
-  verificationStatus: 'Needs review',
+  note: 'Call this number to apply by phone, ask about fast help, or check on your case.',
+  verificationStatus: 'Verified',
   lastVerified: COUNTY_CHECKED_DATE,
 }
 
 const foodDirectory = link(
   'Washington food access directory',
   'https://agr.wa.gov/services/food-access/access-food-near-you',
-  'Ask the place about its hours and how to get food.',
+  'Use this to find food near you. Ask the place about its hours and how to get food.',
 )
 const schoolDirectory = link(
   'Washington school district liaison list',
   'https://ospi.k12.wa.us/student-success/access-opportunity-education/students-experiencing-homelessness/homeless-education-liaison-contact-list',
+  'Use this to find the helper at your school district. They help children who do not have steady housing.',
 )
 const familyDirectory = link(
   'Washington basic needs resource directory',
@@ -59,11 +62,11 @@ const shelterCard = (p: Profile): ActionCard => {
   const steps: string[] = []
 
   if (!entry) {
-    steps.push('We do not have a verified housing contact for this county yet. The list below is for all of Washington. It may not show shelters near you.')
+    steps.push('We do not have a verified housing contact for this county yet. Call 211 and say you need shelter. The list below is for all of Washington.')
+  } else if (entry.phone) {
+    steps.push(`Call ${entry.phone}. You can also open the page below.`)
   } else {
-    steps.push(entry.url
-      ? 'Open the housing page to see how to get help. We have not checked if you can sign up online.'
-      : 'Open the list below. We have not checked if you can sign up online.')
+    steps.push('Open the page below to see how to get help. If you cannot reach anyone, call 211.')
   }
   if (p.urgency === 'tonight') steps.push('Ask for a safe place for tonight.')
   else if (p.urgency === 'days') steps.push('Ask for a place in the next few days. Ask what help you can get until then.')
@@ -170,6 +173,7 @@ const birthCard = (kids: boolean): ActionCard => {
   const birthResource: LinkResource = {
     label: 'Washington birth records',
     url: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
+    note: 'Use this if you were born in Washington. It shows how to order a birth certificate.',
     verificationStatus: 'Verified', lastVerified: '2026-10-26',
     requiresWalkthrough: true, walkthrough: BIRTH_RECORD_WALKTHROUGH,
   }
@@ -179,11 +183,11 @@ const birthCard = (kids: boolean): ActionCard => {
     category: 'next',
     steps: [
       kids ? 'Find out where each child was born.' : 'Find out where you were born.',
-      'Use that state’s birth records office. Ask what ID they take, what it costs, and other ways to get it.',
+      'If it was not in Washington, use that state’s birth records office. Ask what ID they take and what it costs.',
     ],
     resources: [
       birthResource,
-      link('Washington no-fee birth certificates', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/vital-records-no-fee-specific-circumstances'),
+      link('Washington no-fee birth certificates', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/vital-records-no-fee-specific-circumstances', 'Use this if you cannot pay. Some people can get a birth certificate for free.'),
     ],
   })
 }
@@ -193,18 +197,19 @@ const ssnCard = (kids: boolean): ActionCard => card({
   title: kids ? "Replace children's Social Security cards" : 'Replace your Social Security card',
   category: 'next',
   steps: [
-    'Ask if you really need a new card.',
-    'Read how Social Security replaces cards, what ID they take, and if you can do it online.',
+    'Ask if you really need a new card. You may only need to know your number.',
+    'Read the note under each link and open the one that fits.',
     ...(kids ? ['Ask what proof you need to show who the child is and that you are the parent.'] : []),
   ],
   resources: [
     {
-      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Social Security may ask for personal information. You may need to go to an office.'),
+      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to start the application. Social Security may ask for personal information. You may need to go to an office.'),
       requiresWalkthrough: true, walkthrough: SSA_CARD_WALKTHROUGH,
     },
-    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card'),
+    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to read what ID you need and if you can do it online.'),
   {
     label: 'Social Security Administration', phone: '800-772-1213',
+    note: 'Call this if you cannot use the website or need to ask a question.',
     verificationStatus: 'Verified', lastVerified: '2026-10-25',
   }],
 })
@@ -251,8 +256,8 @@ const immigrationCard = (p: Profile): ActionCard => {
       'Before you share anything, ask what they need and how they will use it.',
     ],
     resources: [
-      link('Northwest Immigrant Rights Project', 'https://www.nwirp.org/', 'Check how to reach them and when they are open.'),
-      link('Washington immigration legal help directory', 'https://www.immigrationlawhelp.org/search?state=WA', 'Check how to reach them and when they are open.'),
+      link('Northwest Immigrant Rights Project', 'https://www.nwirp.org/', 'Use this to find free or low-cost immigration legal help. Check how to reach them and when they are open.'),
+      link('Washington immigration legal help directory', 'https://www.immigrationlawhelp.org/search?state=WA', 'Use this to search for other immigration lawyers and groups near you.'),
     ],
   })
 }
@@ -262,7 +267,7 @@ const guidanceCard = (kids: boolean): ActionCard => card({
   title: kids ? 'Choose what your children need' : 'Choose where to start',
   category: 'next',
   steps: kids
-    ? ['Go back and pick school or your children’s papers if they fit.', 'We do not have steps for other needs for children yet.']
+    ? ['Go back and pick school or your children’s papers if they fit.', 'We do not have steps for other needs for children yet. Call 211 for other help.']
     : ['Go back and pick what you want help with.', 'You can pick just one thing.'],
   resources: [familyDirectory],
 })

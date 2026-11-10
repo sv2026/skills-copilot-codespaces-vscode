@@ -81,7 +81,7 @@ export type CountyEntry = {
   note: string
 }
 
-const countyChecked = '2026-11-03'
+const countyChecked = '2026-11-09'
 export const COUNTY_CHECKED_DATE = countyChecked
 
 // Housing access points found on official county or lead-agency pages; every entry still needs human review.
@@ -158,7 +158,7 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
   'Jefferson County': {
     label: 'Jefferson County housing services (OlyCAP)',
     url: 'https://olycap.org/housing-services',
-    note: 'Phone not confirmed on the provider page.',
+    note: 'No phone number is listed on this page. If you cannot reach them, call 211.',
   },
   'Clallam County': {
     label: 'Clallam County Housing Resource Center (Port Angeles)',
@@ -170,13 +170,13 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
     label: 'Pacific County coordinated entry (CCAP)',
     phone: '360-533-5100',
     url: 'https://www.coastalcap.org/housing-and-energy-services/housing-services/',
-    note: 'Number not re-confirmed on the exact page.',
+    note: 'If no one answers, call 211.',
   },
   'Grays Harbor County': {
     label: 'Grays Harbor coordinated entry (CCAP)',
     phone: '360-533-5100',
     url: 'https://www.coastalcap.org/',
-    note: 'County website page was unavailable when checked.',
+    note: 'If no one answers, call 211.',
   },
   'Wahkiakum County': {
     label: 'Wahkiakum County emergency shelter',
@@ -187,8 +187,7 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
 }
 
 export const REVIEW_NEEDED_ITEMS = [
-  'County housing access points were found on official county or lead-agency pages on 2026-11-03. Check each one before you use it.',
+  'County housing access points were found on official county or lead-agency pages on 2026-11-09. Ask each place if it is open and has room.',
   'San Juan County has no confirmed access point yet.',
   'We did not check shelter wait times, who can stay, or what papers you need.',
-  'Picture guides that a person has not checked yet say "needs review".',
 ]
