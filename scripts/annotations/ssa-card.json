@@ -1,0 +1,14 @@
+{
+  "images": [
+    {
+      "source": "public/ssa-card-start-raw.png",
+      "output": "public/ssa-card-start.webp",
+      "boxes": [{ "box": [224, 340, 1056, 382], "arrow": true }]
+    },
+    {
+      "source": "public/ssa-card-documents-raw.png",
+      "output": "public/ssa-card-documents.webp",
+      "boxes": [{ "box": [224, 382, 1056, 432], "arrow": true }]
+    }
+  ]
+}

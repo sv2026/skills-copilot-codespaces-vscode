@@ -1,6 +1,7 @@
 import type { VisualWalkthrough } from './resourceData'
 
 const walkthroughCaptureDate = '2026-11-01'
+const ssaCaptureDate = '2026-11-09'
 const birthRecordCheckDate = '2026-10-26'
 
 export const WA_CONNECTION_WALKTHROUGH: VisualWalkthrough = {
@@ -115,4 +116,60 @@ steps: [
     ],
   },
 ],
+}
+
+const SSA_START_URL = 'https://secure.ssa.gov/ossnap/public/'
+
+const ssaStep = (id: string, heading: string, instruction: string, image: string, alt: string, note: string) => ({
+  id,
+  heading,
+  instruction,
+  screenshotAlt: alt,
+  screenshotUrl: image,
+  sourceUrl: SSA_START_URL,
+  screenshotEvidence: {
+    capturedAt: ssaCaptureDate,
+    sourceUrl: SSA_START_URL,
+    viewport: { width: 1280, height: 900 },
+    reviewedByHuman: false,
+  },
+  verificationStatus: 'needs review' as const,
+  annotations: [{ kind: 'highlight' as const, label: note }],
+})
+
+export const SSA_CARD_WALKTHROUGH: VisualWalkthrough = {
+  id: 'ssa-replacement-card-start',
+  title: 'Where to start: Social Security card',
+  userGoal: 'See where to start asking for a Social Security card.',
+  serviceName: 'Social Security Administration',
+  officialWebsiteUrl: SSA_START_URL,
+  status: 'Draft',
+  lastCapturedAt: ssaCaptureDate,
+  checkedOn: ssaCaptureDate,
+  mayBeOutdated: true,
+  outdatedReason: 'The official website can change. Check it before you rely on these pictures.',
+  aiSupportNotes: [
+    'These pictures come from the public start page. The orange box shows where to look.',
+    'We did not type anything or send anything. We stopped before the application and any identity check.',
+  ],
+  summary:
+    'This page tells you which papers to have before you apply. Read it first. Apply Now starts the real application and asks for personal information.',
+  steps: [
+    ssaStep(
+      'ssa-card-start-page',
+      'Open the start page',
+      'Open the official page. Read the three sections before you click Apply Now.',
+      '/ssa-card-start.webp',
+      'Social Security card start page with the Document requirements section outlined.',
+      'The three sections explain who needs a card, how to ask, and which papers to bring.',
+    ),
+    ssaStep(
+      'ssa-card-document-requirements',
+      'Check your papers first',
+      'Click Document requirements. Papers must be originals or certified copies. They must not be expired, and must show your name and birth date.',
+      '/ssa-card-documents.webp',
+      'Document requirements section opened, saying papers must be original or certified copies.',
+      'This tells you what kind of papers they accept.',
+    ),
+  ],
 }

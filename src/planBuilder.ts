@@ -2,7 +2,7 @@ import type { ActionCard, ResourceLink } from './resourceData'
 import { COUNTY_CHECKED_DATE, COUNTY_ENTRY_POINTS } from './resourceData'
 import { OPT } from './options'
 import type { Profile } from './recommendationLogic'
-import { BIRTH_RECORD_WALKTHROUGH, WA_CONNECTION_WALKTHROUGH } from './walkthroughs'
+import { BIRTH_RECORD_WALKTHROUGH, SSA_CARD_WALKTHROUGH, WA_CONNECTION_WALKTHROUGH } from './walkthroughs'
 
 type LinkResource = ResourceLink & { url: string }
 type CardInput = Omit<Partial<ActionCard>, 'resources'> &
@@ -181,7 +181,10 @@ const ssnCard = (kids: boolean): ActionCard => card({
     ...(kids ? ['Ask what proof you need to show who the child is and that you are the parent.'] : []),
   ],
   resources: [
-    link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Social Security may ask for personal information. You may need to go to an office.'),
+    {
+      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Social Security may ask for personal information. You may need to go to an office.'),
+      requiresWalkthrough: true, walkthrough: SSA_CARD_WALKTHROUGH,
+    },
     link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card'),
   {
     label: 'Social Security Administration', phone: '800-772-1213',
