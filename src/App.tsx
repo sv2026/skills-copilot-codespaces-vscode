@@ -143,6 +143,16 @@ function App() {
         )}
       </header>
 
+      <aside className="emergency-box" aria-labelledby="emergency-title">
+        <h2 id="emergency-title">Need help right now?</h2>
+        <ul>
+          <li><strong>In danger:</strong> call <a href="tel:911">911</a></li>
+          <li><strong>Food, housing, or other help:</strong> call or text <a href="tel:211">211</a> (<a href="https://wa211.org/" target="_blank" rel="noreferrer">wa211.org</a>)</li>
+          <li><strong>Feeling hopeless or in crisis:</strong> call or text <a href="tel:988">988</a></li>
+          <li><strong>Unsafe at home:</strong> call <a href="tel:18007997233">1-800-799-7233</a> (<a href="https://www.thehotline.org/" target="_blank" rel="noreferrer">thehotline.org</a>)</li>
+        </ul>
+      </aside>
+
       {!showResults ? (
         <main className="wizard-card">
           {question && (
