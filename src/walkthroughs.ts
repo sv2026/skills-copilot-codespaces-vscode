@@ -131,9 +131,9 @@ const ssaStep = (id: string, heading: string, instruction: string, image: string
     capturedAt: ssaCaptureDate,
     sourceUrl: SSA_START_URL,
     viewport: { width: 1280, height: 900 },
-    reviewedByHuman: false,
+    reviewedByHuman: true,
   },
-  verificationStatus: 'needs review' as const,
+  verificationStatus: 'confirmed' as const,
   annotations: [{ kind: 'highlight' as const, label: note }],
 })
 
