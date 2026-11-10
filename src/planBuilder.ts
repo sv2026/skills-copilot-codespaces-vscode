@@ -56,12 +56,17 @@ const shelterCard = (p: Profile): ActionCard => {
   const entryResource: LinkResource = entry?.url
     ? { ...link(entry.label, entry.url, entry.note), phone: entry.phone }
     : familyDirectory
+  const phoneOnly: ResourceLink | undefined = entry && !entry.url && entry.phone
+    ? { label: entry.label, phone: entry.phone, note: entry.note, verificationStatus: 'Needs review', lastVerified: COUNTY_CHECKED_DATE }
+    : undefined
   const steps: string[] = []
 
   if (!entry) {
     steps.push('We do not have a verified housing contact for this county yet. The list below is for all of Washington. It may not show shelters near you.')
   } else {
-    steps.push(entry.url
+    steps.push(phoneOnly
+      ? 'Call the number below. This line is for people who are unsafe at home. For other shelter help, use the state list.'
+      : entry.url
       ? 'Open the housing page to see how to get help. We have not checked if you can sign up online.'
       : 'Open the list below. We have not checked if you can sign up online.')
   }
@@ -80,7 +85,7 @@ const shelterCard = (p: Profile): ActionCard => {
       required: [], helpful: [], alternativesToConfirm: ['Ask what information they need and what can wait.'],
       unverified: ['Space, how to sign up, and who can get help all need to be checked.'],
     },
-    resources: [entryResource],
+    resources: phoneOnly ? [familyDirectory, phoneOnly] : [entryResource],
   })
 }
 

@@ -150,9 +150,9 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
     note: 'Listed on lewiscountywa.gov.',
   },
   'Mason County': {
-    label: 'Mason County housing and homelessness',
-    url: 'https://masoncountywa.gov/departments/public_health/community_health_and_human_services/housing_homelessness.php',
-    note: 'Unsafe at home? Turning Pointe Survivor Advocacy has a 24-hour crisis line. Call or text 360-432-1212. Main number: 360-426-1216.',
+    label: 'Turning Pointe Survivor Advocacy (24-hour crisis line)',
+    phone: '360-432-1212',
+    note: 'For people unsafe at home. Call or text. Main number: 360-426-1216.',
   },
   'Jefferson County': {
     label: 'Jefferson County housing services (OlyCAP)',
