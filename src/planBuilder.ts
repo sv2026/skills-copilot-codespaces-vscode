@@ -144,12 +144,7 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
 const idCard = (p: Profile): ActionCard => card({
   id: 'photo-id', title: 'Replace your photo ID', category: p.shelter ? 'next' : 'immediate',
   steps: [
-    'Pick the choice that fits you. Start with the first page below.',
-    'Lost or stolen ID that has not expired: you can order a new one online or by phone. It is mailed to the address DOL has on file in 7 to 10 days. Update your address first if it changed.',
-    'ID has expired, or expires in 90 days: renew it instead of replacing it.',
-    'Never had a Washington ID, or you need to prove who you are: make an appointment at a driver licensing office.',
-    'Need a card that works at the border: ask about an Enhanced ID (EID).',
-    'Do not have a home right now: DOL has a no-cost ID (one per life) or a $5 ID. Use the last page below.',
+    'Read the note under each link. Open the one that matches your situation.',
     'A temporary paper ID does not have a photo. It is not accepted as ID.',
   ],
   usefulDocuments: {
@@ -158,11 +153,16 @@ const idCard = (p: Profile): ActionCard => card({
     unverified: ['Fees and rules can change. Check the DOL page.'],
   },
   resources: [
-    link('Replace an ID card', 'https://dol.wa.gov/id-cards/replace-id-card', 'Phone: 360-902-3900.'),
-    link('All ID card choices', 'https://dol.wa.gov/id-cards'),
-    link('Get a first ID card', 'https://dol.wa.gov/id-cards/get-id-card'),
-    link('Renew an ID card', 'https://dol.wa.gov/id-cards/renew-id-card'),
-    link('Free or $5 ID if you have no home', 'https://dol.wa.gov/id-cards/id-help-unhoused'),
+    link('Replace an ID card', 'https://dol.wa.gov/id-cards/replace-id-card',
+      'Use this if your ID was lost or stolen and has not expired. You can order online or by phone (360-902-3900). It is mailed to the address DOL has on file in 7 to 10 days. Update your address first if it changed.'),
+    link('Renew an ID card', 'https://dol.wa.gov/id-cards/renew-id-card',
+      'Use this if your ID has expired or will expire in 90 days. Renew instead of replacing.'),
+    link('Get a first ID card', 'https://dol.wa.gov/id-cards/get-id-card',
+      'Use this if you never had a Washington ID or need to prove who you are. You make an appointment at a driver licensing office.'),
+    link('Free or $5 ID if you have no home', 'https://dol.wa.gov/id-cards/id-help-unhoused',
+      'Use this if you do not have a home right now. You may get an ID for free (one per life) or for $5.'),
+    link('All ID card choices', 'https://dol.wa.gov/id-cards',
+      'Use this if none of the above fits. It includes the Enhanced ID (EID), which works at the border.'),
   ],
 })
 
