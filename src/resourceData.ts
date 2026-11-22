@@ -191,6 +191,5 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
 
 export const REVIEW_NEEDED_ITEMS = [
   'County contacts were checked on 2026-11-09. Ask if they are open and have room.',
-  'San Juan County has no confirmed access point yet.',
   'We did not check shelter wait times, who can stay, or what papers you need.',
 ]

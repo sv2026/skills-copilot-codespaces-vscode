@@ -56,9 +56,9 @@ const familyDirectory = link(
 )
 
 const housingSearch = link(
-  'My Housing Search',
+  'My Housing Search (long-term housing)',
   'https://www.myhousingsearch.com/tenant/WA/index.html?ch=KCHA',
-  'Use this to search for housing in Washington. It is listed by 211 and kept up to date.',
+  'Use this to look for long-term housing, not emergency shelter. It is listed by 211 and kept up to date.',
   'Free.',
 )
 
@@ -83,7 +83,7 @@ const shelterCard = (p: Profile): ActionCard => {
   else if (p.urgency === 'later') asks.push('Ask about housing for later and how to apply.')
   if (p.children) asks.push('Say that your children need a place too.')
   if (asks.length) steps[0] += ' ' + asks.join(' ')
-  steps.push('You can also search for housing yourself.')
+  steps.push('For long-term housing (not emergency shelter), you can search yourself.')
   return card({
     id: 'shelter-entry',
     title: p.county && !['Other / not listed', "I'm not sure"].includes(p.county)
