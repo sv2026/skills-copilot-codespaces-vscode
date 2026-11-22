@@ -116,7 +116,7 @@ const benefitCard = (p: Profile, kind: 'food' | 'cash'): ActionCard => card({
   steps: [
     ...benefitSteps(p),
     `Use a link below to apply for ${kind === 'food' ? 'Basic Food' : 'cash help'}.`,
-    ...(kind === 'food' ? ['Ask DSHS about fast help. You may not get help today.'] : []),
+    ...(kind === 'food' ? ['Ask DSHS about fast help. It may not be same-day.'] : []),
     'Ask what proof you need and what can wait.',
   ],
   resources: benefitResources(),
@@ -131,7 +131,7 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
       'Check your application on Washington Connection, or ask DSHS.',
       ...(!p.pendingBenefits || p.pendingBenefits === 'unsure'
         ? ['Find out what you applied for before you apply again.'] : []),
-      'Ask what to do if you can\'t safely give them something they ask for.',
+      'Tell them if you cannot safely give something they ask for.',
     ],
     resources: benefitResources(),
   })
@@ -140,8 +140,8 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
     title: 'Look at the help you get now',
     category: 'immediate',
     steps: [
-      'Look at your case on Washington Connection, or ask DSHS about your help.',
-      'Ask how to get mail and messages safely. Ask if you need to update anything.',
+      'Look at your case on Washington Connection, or call DSHS.',
+      'Ask how to get mail safely and if you need to update anything.',
     ],
     resources: benefitResources(),
   })
@@ -227,17 +227,17 @@ const ssnCard = (kids: boolean): ActionCard => card({
 const schoolCard = (p: Profile): ActionCard => {
   const wants = (option: string) => p.schoolNeeds.includes(option)
   const steps = [
-    'Ask the school or school district for the help you picked.',
+    'Call or visit your school. Ask for the help you picked.',
     ...(wants(OPT.school.stay) ? ['Ask if your child can stay in the same school.'] : []),
     ...(wants(OPT.school.rides) ? ['Ask about rides to school.'] : []),
     ...(wants(OPT.school.meals) ? ['Ask about free school meals.'] : []),
-    ...(wants(OPT.school.enroll) ? ['Ask how to sign up. Ask what can wait if papers are missing.'] : []),
+    ...(wants(OPT.school.enroll) ? ['Ask how to sign up. Papers can often wait.'] : []),
     ...(wants(OPT.school.records) ? ['Ask the school to send your child’s records.'] : []),
     ...((p.docAnswered('kidsSchool') && !p.hasDoc('kidsSchool')) || (p.docAnswered('kidsBirth') && !p.hasDoc('kidsBirth'))
-      ? ['Tell the school which papers you don\'t have. Ask what can wait.'] : []),
-    'If you do not have steady housing, ask the school district helper about extra school rights.',
+      ? ['Tell the school which papers you do not have.'] : []),
+    'No steady housing? Ask the school district helper about your child’s school rights.',
     ...(wants(OPT.school.enroll)
-      ? ['If you have these rights, your child should be able to start school even without all papers.']
+      ? ['With these rights, your child can often start school without all papers.']
       : []),
   ]
   return card({
@@ -262,10 +262,12 @@ const immigrationCard = (p: Profile): ActionCard => {
     category: p.immigrationHelp === 'benefits' ? 'immediate' : 'next',
     steps: [
       topic[p.immigrationHelp ?? 'unsure'],
-      'Ask how to reach them and how to make an appointment.',
-      'Before you share anything, ask what they need and how they will use it.',
+      'Ask how to make an appointment.',
+      'Before you share anything, ask how they will use it.',
     ],
     resources: [
+      link('NWIRP help for survivors of abuse (VAWA)', 'https://www.nwirp.org/resources/VAWA/',
+        'Use this if a spouse, parent or adult child who is a U.S. citizen or green card holder hurt you. A VAWA petition lets you ask for your own immigration papers without their help or knowledge. It may not fit if the person who hurt you is not a citizen or green card holder. Other options may exist, so talk to a lawyer.'),
       link('Northwest Immigrant Rights Project', 'https://www.nwirp.org/', 'Use this to find free or low-cost immigration legal help. Check how to reach them and when they are open.'),
       link('Washington immigration legal help directory', 'https://www.immigrationlawhelp.org/search?state=WA', 'Use this to search for other immigration lawyers and groups near you.'),
     ],
