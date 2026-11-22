@@ -23,6 +23,7 @@ function App() {
   const [showResults, setShowResults] = useState(false)
   const [showSafetyDetails, setShowSafetyDetails] = useState(false)
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
+  const [stepPosition, setStepPosition] = useState({ cardId: '', index: 0 })
 
   const headingRef = useRef<HTMLHeadingElement>(null)
 
@@ -44,6 +45,10 @@ function App() {
   const planCards = useMemo(() => getCardsForAnswers(activeAnswers), [activeAnswers])
   const safeSlideIndex = Math.min(currentSlideIndex, Math.max(planCards.length - 1, 0))
   const activeCard: ActionCard | undefined = planCards[safeSlideIndex]
+  const stepIndex = activeCard && stepPosition.cardId === activeCard.id
+    ? Math.min(stepPosition.index, activeCard.steps.length - 1) : 0
+  const onLastStep = !activeCard || stepIndex >= activeCard.steps.length - 1
+  const goToStep = (index: number) => activeCard && setStepPosition({ cardId: activeCard.id, index })
 
   useEffect(() => {
     headingRef.current?.focus()
@@ -233,13 +238,23 @@ function App() {
                 </p>
               )}
 
-              <h4>What to do</h4>
-              <ol className="action-steps">
-                {activeCard.steps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
+              <div className="step-card">
+                <p className="step-count">Step {stepIndex + 1} of {activeCard.steps.length}</p>
+                <p className="step-text">{activeCard.steps[stepIndex]}</p>
+                {activeCard.steps.length > 1 && (
+                  <div className="step-controls">
+                    <button type="button" className="secondary" disabled={stepIndex === 0} onClick={() => goToStep(stepIndex - 1)}>
+                      ← Back
+                    </button>
+                    <button type="button" disabled={onLastStep} onClick={() => goToStep(stepIndex + 1)}>
+                      Next step →
+                    </button>
+                  </div>
+                )}
+              </div>
 
+              {onLastStep && (
+                <>
               {Object.values(activeCard.usefulDocuments).some((list) => list.length > 0) && (
                 <>
                   <h4>Good to know</h4>
@@ -309,6 +324,8 @@ function App() {
               ) : (
                 null
               )}
+                </>
+              )}
             </section>
           )}
 
@@ -319,7 +336,7 @@ function App() {
               disabled={safeSlideIndex === 0}
               onClick={() => setCurrentSlideIndex(Math.max(safeSlideIndex - 1, 0))}
             >
-              ← Back
+              ← Previous part
             </button>
             <button
               type="button"
@@ -328,7 +345,7 @@ function App() {
                 setCurrentSlideIndex(Math.min(safeSlideIndex + 1, planCards.length - 1))
               }
             >
-              Next →
+              Next part →
             </button>
           </div>
 
