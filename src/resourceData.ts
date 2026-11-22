@@ -158,6 +158,12 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
     phone: '360-432-1212',
     note: 'For people unsafe at home. Call or text. Main number: 360-426-1216.',
   },
+  'San Juan County': {
+    label: 'SAFE San Juans (24/7 crisis line)',
+    phone: '360-378-2345',
+    url: 'https://www.safesj.org/about-us',
+    note: 'For people unsafe at home. Orcas: 360-376-1234. Lopez: 360-468-4567.',
+  },
   'Jefferson County': {
     label: 'Jefferson County housing services (OlyCAP)',
     url: 'https://olycap.org/housing-services',

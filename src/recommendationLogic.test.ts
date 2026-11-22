@@ -140,10 +140,9 @@ describe('questions', () => {
       expect(cards({ ...base, contact: ['Online only; phone is not safe'] })).toEqual(cards(base))
     })
 
-    it('recognizes the lack of a confirmed San Juan housing contact', () => {
+    it('uses the SAFE San Juans crisis line for San Juan County', () => {
       const a = { needs: [OPT.needs.shelter], county: ['San Juan County'], urgency: [OPT.urgency.tonight] }
-      expect(steps(a, 'shelter-entry')).toContain('do not have a verified housing contact')
-      expect(cards(a)[0].resources[0].url).toContain('dcyf.wa.gov')
+      expect(cards(a)[0].resources[0].phone).toBe('360-378-2345')
     })
 
     it('provides a web link on housing slides for every county option', () => {
