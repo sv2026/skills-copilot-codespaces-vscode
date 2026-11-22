@@ -288,6 +288,7 @@ function App() {
                         </a>
                       )}
                       {resource.note && <p className="resource-note">{resource.note}</p>}
+                      {resource.cost && <p className="resource-cost"><strong>Cost:</strong> {resource.cost}</p>}
                       {resource.phone && (
                         <p className="resource-phone">
                           <a className="call-link" href={`tel:${resource.phone.split(',')[0].replace(/[^\d]/g, '')}`}>Call {resource.phone}</a>

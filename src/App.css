@@ -202,6 +202,7 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
 }
 .resource-meta, .resource-note { color: var(--muted); font-size: 0.95rem; }
 .resource-phone { font-weight: 700; }
+.resource-cost { font-size: 1.05rem; }
 
 .summary-panel { margin-top: 0.8rem; border: 1px solid var(--line); border-radius: 0.9rem; background: #fbfcf9; }
 .summary-panel summary { cursor: pointer; padding: 1.1rem 1.2rem; font-weight: 700; font-size: 1.2rem; }

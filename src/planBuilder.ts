@@ -16,8 +16,8 @@ const card = (input: CardInput): ActionCard => ({
   ...input,
 })
 
-const link = (label: string, url: string, note?: string): LinkResource => ({
-  label, url, note, verificationStatus: 'Verified', lastVerified: COUNTY_CHECKED_DATE,
+const link = (label: string, url: string, note?: string, cost?: string): LinkResource => ({
+  label, url, note, cost, verificationStatus: 'Verified', lastVerified: COUNTY_CHECKED_DATE,
 })
 
 const washingtonConnection: LinkResource = {
@@ -158,7 +158,8 @@ const idCard = (p: Profile): ActionCard => card({
     link('Get a first ID card', 'https://dol.wa.gov/id-cards/get-id-card',
       'Use this if you never had a Washington ID or need to prove who you are. You make an appointment at a driver licensing office.'),
     link('Free or $5 ID if you have no home', 'https://dol.wa.gov/id-cards/id-help-unhoused',
-      'Use this if you do not have a home right now. You may get an ID for free (one per life) or for $5.'),
+      'Use this if you do not have a home right now. You may get an ID for free (one per life) or for $5.',
+      'Free once, or $5. You may need a letter from DSHS or a WIC clinic if you are 25 or older.'),
     link('All ID card choices', 'https://dol.wa.gov/id-cards',
       'Use this if none of the above fits. It includes the Enhanced ID (EID), which works at the border.'),
   ],
@@ -169,6 +170,7 @@ const birthCard = (kids: boolean): ActionCard => {
     label: 'Washington birth records',
     url: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
     note: 'Use this if you were born in Washington. It shows how to order a birth certificate.',
+    cost: 'Starts at $25 for each copy. Other fees may apply.',
     verificationStatus: 'Verified', lastVerified: '2026-10-26',
     requiresWalkthrough: true, walkthrough: BIRTH_RECORD_WALKTHROUGH,
   }
