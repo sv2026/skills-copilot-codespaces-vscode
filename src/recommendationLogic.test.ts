@@ -269,7 +269,7 @@ describe('personas', () => {
     }
     expect(ids(a)).toContain('school-liaison')
     expect(steps(a, 'school-liaison')).toContain('With these rights')
-    expect(steps(a, 'school-liaison')).toContain('start school even without all papers')
+    expect(steps(a, 'school-liaison')).toContain('start school without all papers')
   })
 
   it('immigration help type changes the plan', () => {
