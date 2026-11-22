@@ -56,9 +56,9 @@ const familyDirectory = link(
 )
 
 const housingSearch = link(
-  'My Housing Search',
+  'My Housing Search (long-term housing)',
   'https://www.myhousingsearch.com/tenant/WA/index.html?ch=KCHA',
-  'Use this to search for housing in Washington. It is listed by 211 and kept up to date.',
+  'Use this to look for long-term housing, not emergency shelter. It is listed by 211 and kept up to date.',
   'Free.',
 )
 
@@ -76,11 +76,14 @@ const shelterCard = (p: Profile): ActionCard => {
   } else {
     steps.push('Open the page below to see how to get help. If you cannot reach anyone, call 211.')
   }
-  if (p.urgency === 'tonight') steps.push('Ask for a safe place for tonight.')
-  else if (p.urgency === 'days') steps.push('Ask for a place in the next few days. Ask what help you can get until then.')
-  else if (p.urgency === 'weeks') steps.push('Ask what choices you have in the next few weeks and how to apply.')
-  else if (p.urgency === 'later') steps.push('Ask about housing for later and how to apply.')
-  if (p.children) steps.push('Say that your children need a place too.')
+  const asks: string[] = []
+  if (p.urgency === 'tonight') asks.push('Ask for a safe place for tonight.')
+  else if (p.urgency === 'days') asks.push('Ask for a place in the next few days. Ask what help you can get until then.')
+  else if (p.urgency === 'weeks') asks.push('Ask what choices you have in the next few weeks and how to apply.')
+  else if (p.urgency === 'later') asks.push('Ask about housing for later and how to apply.')
+  if (p.children) asks.push('Say that your children need a place too.')
+  if (asks.length) steps[0] += ' ' + asks.join(' ')
+  steps.push('For long-term housing (not emergency shelter), you can search yourself.')
   return card({
     id: 'shelter-entry',
     title: p.county && !['Other / not listed', "I'm not sure"].includes(p.county)
@@ -88,6 +91,7 @@ const shelterCard = (p: Profile): ActionCard => {
     category: p.urgency === 'tonight' || p.urgency === 'days' ? 'immediate' : 'next',
     steps,
     resources: [entryResource, housingSearch],
+    resourceSteps: [0, 1],
   })
 }
 
@@ -103,24 +107,22 @@ const foodNowCard = (): ActionCard => card({
 
 const benefitResources = (): [LinkResource, ResourceLink] => [washingtonConnection, dshsPhone]
 
-const benefitSteps = (p: Profile) => [
-  ...(p.immigration && p.immigrationHelp === 'benefits'
-    ? ['You can ask an immigration lawyer how applying could affect you.']
-    : []),
-]
-
-const benefitCard = (p: Profile, kind: 'food' | 'cash'): ActionCard => card({
-  id: kind === 'food' ? 'dshs-food-assistance' : 'dshs-cash-assistance',
-  title: kind === 'food' ? 'Apply for food help' : 'Apply for cash help',
-  category: 'immediate',
-  steps: [
-    ...benefitSteps(p),
-    `Use a link below to apply for ${kind === 'food' ? 'Basic Food' : 'cash help'}.`,
-    ...(kind === 'food' ? ['Ask DSHS about fast help. It may not be same-day.'] : []),
-    'Ask what proof you need and what can wait.',
-  ],
-  resources: benefitResources(),
-})
+const benefitCard = (p: Profile, kind: 'food' | 'cash'): ActionCard => {
+  const worry = p.immigration && p.immigrationHelp === 'benefits'
+    ? 'Applying may affect your immigration case. A free immigration lawyer can tell you before you apply. '
+    : ''
+  return card({
+    id: kind === 'food' ? 'dshs-food-assistance' : 'dshs-cash-assistance',
+    title: kind === 'food' ? 'Apply for food help' : 'Apply for cash help',
+    category: 'immediate',
+    steps: [
+      `${worry}Use this link to apply for ${kind === 'food' ? 'Basic Food' : 'cash help'}.`,
+      `Ask DSHS. ${kind === 'food' ? 'Ask about fast help. It may not be same-day. ' : ''}Ask what proof you need and what can wait.`,
+    ],
+    resources: benefitResources(),
+    resourceSteps: [0, 1],
+  })
+}
 
 const benefitFollowCard = (p: Profile): ActionCard | undefined => {
   if (p.waiting) return card({
@@ -128,10 +130,8 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
     title: 'Check on your application',
     category: 'immediate',
     steps: [
-      'Check your application on Washington Connection, or ask DSHS.',
-      ...(!p.pendingBenefits || p.pendingBenefits === 'unsure'
-        ? ['Find out what you applied for before you apply again.'] : []),
-      'Tell them if you cannot safely give something they ask for.',
+      `Check your application on Washington Connection, or ask DSHS. ${!p.pendingBenefits || p.pendingBenefits === 'unsure'
+        ? 'Find out what you applied for before you apply again. ' : ''}Tell them if you cannot safely give something they ask for.`,
     ],
     resources: benefitResources(),
   })
@@ -140,8 +140,7 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
     title: 'Look at the help you get now',
     category: 'immediate',
     steps: [
-      'Look at your case on Washington Connection, or call DSHS.',
-      'Ask how to get mail safely and if you need to update anything.',
+      'Look at your case on Washington Connection, or call DSHS. Ask how to get mail safely and if you need to update anything.',
     ],
     resources: benefitResources(),
   })
@@ -151,9 +150,11 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
 const idCard = (p: Profile): ActionCard => card({
   id: 'photo-id', title: 'Replace your photo ID', category: p.shelter ? 'next' : 'immediate',
   steps: [
-    'Read the note under each link. Open the one that matches your situation.',
-    'A temporary paper ID does not have a photo. It is not accepted as ID.',
+    'Lost or stolen? Expired? Use the link that matches. A temporary paper ID has no photo and is not accepted as ID.',
+    'Never had a Washington ID, or have no home right now? Use one of these.',
+    'None of these fit? See all ID choices.',
   ],
+  resourceSteps: [0, 0, 1, 1, 2],
   usefulDocuments: {
     required: [], helpful: ['Your mailing address'],
     alternativesToConfirm: [], unverified: [],
@@ -190,9 +191,10 @@ const birthCard = (kids: boolean): ActionCard => {
     title: kids ? "Replace children's birth certificates" : 'Replace your birth certificate',
     category: 'next',
     steps: [
-      kids ? 'Find out where each child was born.' : 'Find out where you were born.',
-      'If it was not in Washington, use that state’s birth records office. Ask what ID they take and what it costs.',
+      `${kids ? 'Find out where each child was born.' : 'Find out where you were born.'} If it was in Washington, use this link. If not, use that state’s birth records office and ask what ID they take and what it costs.`,
+      'Cannot pay? Some people can get a birth certificate for free.',
     ],
+    resourceSteps: [0, 1],
     resources: [
       birthResource,
       link('Washington no-fee birth certificates', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/vital-records-no-fee-specific-circumstances', 'Use this if you cannot pay. Some people can get a birth certificate for free.',
@@ -206,16 +208,17 @@ const ssnCard = (kids: boolean): ActionCard => card({
   title: kids ? "Replace children's Social Security cards" : 'Replace your Social Security card',
   category: 'next',
   steps: [
-    'Ask if you really need a new card. You may only need to know your number.',
-    ...(kids ? ['Ask what proof you need to show who the child is and that you are the parent.'] : []),
+    `You may only need to know your number, not get a new card. If you need one, read what ID to bring.${kids ? ' Ask what proof you need to show who the child is and that you are the parent.' : ''}`,
+    'Start the application. You can usually do it online. Call if you cannot use the website.',
   ],
+  resourceSteps: [1, 0, 1],
   resources: [
     {
-      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to start the application. You can usually do it online. Social Security may ask for personal information.',
+      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to apply online. They will ask for personal information.',
         'Free.'),
       requiresWalkthrough: true, walkthrough: SSA_CARD_WALKTHROUGH,
     },
-    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to read what ID you need. You can usually apply online. You only need to go in person to change major details.',
+    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to see what ID to bring. Go in person only to change major details.',
         'Free.'),
   {
     label: 'Social Security Administration', phone: '800-772-1213',
@@ -226,8 +229,7 @@ const ssnCard = (kids: boolean): ActionCard => card({
 
 const schoolCard = (p: Profile): ActionCard => {
   const wants = (option: string) => p.schoolNeeds.includes(option)
-  const steps = [
-    'Call or visit your school. Ask for the help you picked.',
+  const asks = [
     ...(wants(OPT.school.stay) ? ['Ask if your child can stay in the same school.'] : []),
     ...(wants(OPT.school.rides) ? ['Ask about rides to school.'] : []),
     ...(wants(OPT.school.meals) ? ['Ask about free school meals.'] : []),
@@ -239,6 +241,10 @@ const schoolCard = (p: Profile): ActionCard => {
     ...(wants(OPT.school.enroll)
       ? ['With these rights, your child can often start school without all papers.']
       : []),
+  ]
+  const steps = [
+    'Use this link to find your school or district. Call or visit and ask for the help you picked.',
+    asks.join(' '),
   ]
   return card({
     id: p.shelter ? 'school-liaison' : 'school-support',
@@ -254,20 +260,20 @@ const immigrationCard = (p: Profile): ActionCard => {
     options: 'Ask about your choices.',
     forms: 'Ask for help with your forms.',
     papers: 'Ask how to find or replace your immigration papers.',
-    benefits: 'Ask how applying for help could affect you.',
+    benefits: 'Ask if getting food or cash help could affect your immigration case.',
     unsure: 'Ask what immigration help they offer.',
   }
   return card({
     id: 'immigration-support', title: 'Find immigration legal help',
     category: p.immigrationHelp === 'benefits' ? 'immediate' : 'next',
     steps: [
-      topic[p.immigrationHelp ?? 'unsure'],
-      'Ask how to make an appointment.',
-      'Before you share anything, ask how they will use it.',
+      'If someone hurt you, start here.',
+      `${topic[p.immigrationHelp ?? 'unsure']} Ask how they will use what you share.`,
     ],
+    resourceSteps: [0, 1, 1],
     resources: [
       link('NWIRP help for survivors of abuse (VAWA)', 'https://www.nwirp.org/resources/VAWA/',
-        'Use this if a spouse, parent or adult child who is a U.S. citizen or green card holder hurt you. A VAWA petition lets you ask for your own immigration papers without their help or knowledge. It may not fit if the person who hurt you is not a citizen or green card holder. Other options may exist, so talk to a lawyer.'),
+        'Use this if someone hurt you or you were a victim of a crime. VAWA is for abuse by a spouse, parent or adult child who is a U.S. citizen or green card holder. U visa, T visa and I-751 waiver pages cover other situations.'),
       link('Northwest Immigrant Rights Project', 'https://www.nwirp.org/', 'Use this to find free or low-cost immigration legal help. Check how to reach them and when they are open.'),
       link('Washington immigration legal help directory', 'https://www.immigrationlawhelp.org/search?state=WA', 'Use this to search for other immigration lawyers and groups near you.'),
     ],
@@ -279,8 +285,8 @@ const guidanceCard = (kids: boolean): ActionCard => card({
   title: kids ? 'Choose what your children need' : 'Choose where to start',
   category: 'next',
   steps: kids
-    ? ['Go back and pick school or your children’s papers if they fit.', 'We do not have steps for other needs for children yet. Call 211 for other help.']
-    : ['Go back and pick what you want help with.', 'You can pick just one thing.'],
+    ? ['Go back and pick school or your children’s papers if they fit. We do not have steps for other needs for children yet. Call 211 for other help.']
+    : ['Go back and pick what you want help with. You can pick just one thing.'],
   resources: [familyDirectory],
 })
 
@@ -317,7 +323,7 @@ export const buildCards = (p: Profile): ActionCard[] => {
     title: 'Your documents',
     category: 'next',
     steps: p.docsAnswered
-      ? ['You said you have these papers. We did not add steps to replace them.', 'Go back if you need a different paper.']
+      ? ['You said you have these papers. We did not add steps to replace them. Go back if you need a different paper.']
       : ['Go back and answer the documents question to see your steps.'],
     resources: p.kidsDocs
       ? [link('Washington birth record information', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record')]

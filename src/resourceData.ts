@@ -73,6 +73,8 @@ export type ActionCard = {
   missingDocsPlan: string
   endGoal: string
   resources: ResourceLink[]
+  // Step index for each resource (same order as resources). Missing means the first step.
+  resourceSteps?: number[]
 }
 
 export type CountyEntry = {
@@ -156,6 +158,12 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
     phone: '360-432-1212',
     note: 'For people unsafe at home. Call or text. Main number: 360-426-1216.',
   },
+  'San Juan County': {
+    label: 'SAFE San Juans (24/7 crisis line)',
+    phone: '360-378-2345',
+    url: 'https://www.safesj.org/about-us',
+    note: 'For people unsafe at home. Orcas: 360-376-1234. Lopez: 360-468-4567.',
+  },
   'Jefferson County': {
     label: 'Jefferson County housing services (OlyCAP)',
     url: 'https://olycap.org/housing-services',
@@ -188,7 +196,6 @@ export const COUNTY_ENTRY_POINTS: Record<string, CountyEntry> = {
 }
 
 export const REVIEW_NEEDED_ITEMS = [
-  'County housing access points were found on official county or lead-agency pages on 2026-11-09. Ask each place if it is open and has room.',
-  'San Juan County has no confirmed access point yet.',
+  'County contacts were checked on 2026-11-09. Ask if they are open and have room.',
   'We did not check shelter wait times, who can stay, or what papers you need.',
 ]

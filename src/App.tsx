@@ -47,6 +47,10 @@ function App() {
   const activeCard: ActionCard | undefined = planCards[safeSlideIndex]
   const stepIndex = activeCard && stepPosition.cardId === activeCard.id
     ? Math.min(stepPosition.index, activeCard.steps.length - 1) : 0
+  const stepResources = activeCard
+    ? activeCard.resources.filter((_, i) =>
+        Math.min(activeCard.resourceSteps?.[i] ?? 0, activeCard.steps.length - 1) === stepIndex)
+    : []
   const onLastStep = !activeCard || stepIndex >= activeCard.steps.length - 1
   const goToStep = (index: number) => activeCard && setStepPosition({ cardId: activeCard.id, index })
 
@@ -136,14 +140,8 @@ function App() {
         </div>
         {showSafetyDetails && (
           <div className="notice" role="note">
-            <p>
-              The leave button does not erase your history. Someone using the same device may still
-              see the pages you visited. A private window can help.
-            </p>
-            <p>
-              We do not save your answers. We do not use accounts or tracking.
-            </p>
-            <p>Other websites may ask for your personal information. They have their own privacy rules.</p>
+            <p>The leave button does not erase your history. A private window can help.</p>
+            <p>We do not save your answers or track you.</p>
           </div>
         )}
       </header>
@@ -218,12 +216,6 @@ function App() {
           )}
 
           {activeCard && (
-            <p className="help-line">
-              Need help now? Call or text <a href="tel:211">211</a>. In danger? Call <a href="tel:911">911</a>.
-            </p>
-          )}
-
-          {activeCard && (
             <section className="slide-card" aria-live="polite">
               <div className="slide-header">
                 <p>
@@ -238,17 +230,16 @@ function App() {
                 </p>
               )}
 
-              <h4>Links</h4>
-              {activeCard.resources.length > 0 ? (
+              <div className="step-card">
+                <p className="step-count">Step {stepIndex + 1} of {activeCard.steps.length}</p>
+                <p className="step-text">{activeCard.steps[stepIndex]}</p>
+              {stepResources.length > 0 && (
                 <ul className="resource-list">
-                  {activeCard.resources.map((resource) => (
+                  {stepResources.map((resource) => (
                     <li key={`${activeCard.id}-${resource.label}-${resource.url ?? resource.phone ?? ''}`} className="resource-card">
-                      <div className="resource-header">
-                        <p className="resource-title">{resource.label}</p>
-                      </div>
                       {resource.url && (
                         <a href={resource.url} target="_blank" rel="noreferrer">
-                          Open {resource.label} <span aria-hidden="true">↗</span>
+                          {resource.label} <span aria-hidden="true">↗</span>
                         </a>
                       )}
                       {resource.note && <p className="resource-note">{resource.note}</p>}
@@ -258,7 +249,6 @@ function App() {
                           <a className="call-link" href={`tel:${resource.phone.split(',')[0].replace(/[^\d]/g, '')}`}>Call {resource.phone}</a>
                         </p>
                       )}
-                      <p className="resource-meta">Last checked: {resource.lastVerified}</p>
                       {resource.requiresWalkthrough && resource.walkthrough && (
                         <details className="summary-panel walkthrough-panel">
                           <summary>See pictures of each step</summary>
@@ -270,14 +260,9 @@ function App() {
                     </li>
                   ))}
                 </ul>
-              ) : (
-                null
               )}
 
               <h4>Steps</h4>
-              <div className="step-card">
-                <p className="step-count">Step {stepIndex + 1} of {activeCard.steps.length}</p>
-                <p className="step-text">{activeCard.steps[stepIndex]}</p>
                 {activeCard.steps.length > 1 && (
                   <div className="step-controls">
                     <button type="button" className="secondary" disabled={stepIndex === 0} onClick={() => goToStep(stepIndex - 1)}>
@@ -408,7 +393,7 @@ function App() {
           </div>
 
           <p className="disclaimer">
-            Rules and contact details can change. Check them before you share information or pay money. Some picture guides are still being checked.
+            Details can change. Check before you share information or pay.
           </p>
           <a
             href="https://github.com/sv2026/skills-copilot-codespaces-vscode/issues/new?title=Outdated%20resource%20information&body=Please%20describe%20which%20resource%20or%20requirement%20needs%20review.%20Do%20not%20include%20personal%20information."
