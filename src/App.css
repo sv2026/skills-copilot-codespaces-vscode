@@ -272,3 +272,9 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
 .step-text { margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.35; }
 .step-controls { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
 .step-controls button { flex: 1 1 10rem; }
+
+.step-label {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
