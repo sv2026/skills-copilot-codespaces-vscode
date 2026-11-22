@@ -26,6 +26,7 @@ const washingtonConnection: LinkResource = {
   verificationStatus: 'Verified',
   lastVerified: '2026-10-25',
   note: 'Use this to apply for food or cash help online, or to check on an application.',
+  cost: 'Free.',
   requiresWalkthrough: true,
   walkthrough: WA_CONNECTION_WALKTHROUGH,
 }
@@ -54,6 +55,13 @@ const familyDirectory = link(
   'This list is for all of Washington. Ask each place if it is open and has room.',
 )
 
+const housingSearch = link(
+  'My Housing Search',
+  'https://www.myhousingsearch.com/tenant/WA/index.html?ch=KCHA',
+  'Use this to search for housing in Washington. It is listed by 211 and kept up to date.',
+  'Free.',
+)
+
 const shelterCard = (p: Profile): ActionCard => {
   const entry = p.county ? COUNTY_ENTRY_POINTS[p.county] : undefined
   const entryResource: LinkResource = entry?.url
@@ -79,7 +87,7 @@ const shelterCard = (p: Profile): ActionCard => {
       ? `Find housing in ${p.county}` : 'Find housing near you',
     category: p.urgency === 'tonight' || p.urgency === 'days' ? 'immediate' : 'next',
     steps,
-    resources: [entryResource],
+    resources: [entryResource, housingSearch],
   })
 }
 
@@ -173,7 +181,7 @@ const birthCard = (kids: boolean): ActionCard => {
     label: 'Washington birth records',
     url: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
     note: 'Use this if you were born in Washington. It shows how to order a birth certificate.',
-    cost: 'Starts at $25 for each copy. Other fees may apply.',
+    cost: '$25 by mail from the state. Online or phone (VitalChek) is $40.50 or more. In person in King County is $28.50.',
     verificationStatus: 'Verified', lastVerified: '2026-10-26',
     requiresWalkthrough: true, walkthrough: BIRTH_RECORD_WALKTHROUGH,
   }
@@ -187,7 +195,8 @@ const birthCard = (kids: boolean): ActionCard => {
     ],
     resources: [
       birthResource,
-      link('Washington no-fee birth certificates', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/vital-records-no-fee-specific-circumstances', 'Use this if you cannot pay. Some people can get a birth certificate for free.'),
+      link('Washington no-fee birth certificates', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/vital-records-no-fee-specific-circumstances', 'Use this if you cannot pay. Some people can get a birth certificate for free.',
+    '$0 if you were born and live in Washington and have no home. Ask a service provider to help. Some nonprofits give vouchers for in-person orders.'),
     ],
   })
 }
@@ -202,10 +211,12 @@ const ssnCard = (kids: boolean): ActionCard => card({
   ],
   resources: [
     {
-      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to start the application. Social Security may ask for personal information. You may need to go to an office.'),
+      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to start the application. You can usually do it online. Social Security may ask for personal information.',
+        'Free.'),
       requiresWalkthrough: true, walkthrough: SSA_CARD_WALKTHROUGH,
     },
-    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to read what ID you need and if you can do it online.'),
+    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to read what ID you need. You can usually apply online. You only need to go in person to change major details.',
+        'Free.'),
   {
     label: 'Social Security Administration', phone: '800-772-1213',
     note: 'Call this if you cannot use the website or need to ask a question.',
