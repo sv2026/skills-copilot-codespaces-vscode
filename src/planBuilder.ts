@@ -105,7 +105,7 @@ const benefitResources = (): [LinkResource, ResourceLink] => [washingtonConnecti
 
 const benefitSteps = (p: Profile) => [
   ...(p.immigration && p.immigrationHelp === 'benefits'
-    ? ['You can ask an immigration lawyer how applying could affect you.']
+    ? ['Applying for food or cash help may affect your immigration case. A free immigration lawyer can tell you before you apply.']
     : []),
 ]
 
@@ -254,7 +254,7 @@ const immigrationCard = (p: Profile): ActionCard => {
     options: 'Ask about your choices.',
     forms: 'Ask for help with your forms.',
     papers: 'Ask how to find or replace your immigration papers.',
-    benefits: 'Ask how applying for help could affect you.',
+    benefits: 'Ask if getting food or cash help could affect your immigration case.',
     unsure: 'Ask what immigration help they offer.',
   }
   return card({
