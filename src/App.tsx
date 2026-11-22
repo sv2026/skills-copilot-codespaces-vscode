@@ -277,12 +277,7 @@ function App() {
               <h4>Steps</h4>
               <div className="step-card">
                 <p className="step-count">Step {stepIndex + 1} of {activeCard.steps.length}</p>
-                {(() => {
-                  const m = activeCard.steps[stepIndex].match(/^([^:.]{2,30}): (.+)$/)
-                  return m
-                    ? <><p className="step-label">{m[1]}</p><p className="step-text">{m[2]}</p></>
-                    : <p className="step-text">{activeCard.steps[stepIndex]}</p>
-                })()}
+                <p className="step-text">{activeCard.steps[stepIndex]}</p>
                 {activeCard.steps.length > 1 && (
                   <div className="step-controls">
                     <button type="button" className="secondary" disabled={stepIndex === 0} onClick={() => goToStep(stepIndex - 1)}>

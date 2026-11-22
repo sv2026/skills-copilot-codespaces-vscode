@@ -285,7 +285,7 @@ describe('personas', () => {
       benefits: [OPT.benefits.none],
       immigrationHelp: [OPT.immigration.benefits],
     }
-    expect(steps(a, 'dshs-food-assistance')).toContain('Ask a lawyer first')
+    expect(steps(a, 'dshs-food-assistance')).toContain('You can ask an immigration lawyer')
     expect(ids(a).indexOf('immigration-support')).toBeLessThan(ids(a).indexOf('dshs-food-assistance'))
   })
 
