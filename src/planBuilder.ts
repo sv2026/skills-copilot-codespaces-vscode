@@ -16,8 +16,8 @@ const card = (input: CardInput): ActionCard => ({
   ...input,
 })
 
-const link = (label: string, url: string, note?: string): LinkResource => ({
-  label, url, note, verificationStatus: 'Verified', lastVerified: COUNTY_CHECKED_DATE,
+const link = (label: string, url: string, note?: string, cost?: string): LinkResource => ({
+  label, url, note, cost, verificationStatus: 'Verified', lastVerified: COUNTY_CHECKED_DATE,
 })
 
 const washingtonConnection: LinkResource = {
@@ -26,6 +26,7 @@ const washingtonConnection: LinkResource = {
   verificationStatus: 'Verified',
   lastVerified: '2026-10-25',
   note: 'Use this to apply for food or cash help online, or to check on an application.',
+  cost: 'Free.',
   requiresWalkthrough: true,
   walkthrough: WA_CONNECTION_WALKTHROUGH,
 }
@@ -54,6 +55,13 @@ const familyDirectory = link(
   'This list is for all of Washington. Ask each place if it is open and has room.',
 )
 
+const housingSearch = link(
+  'My Housing Search',
+  'https://www.myhousingsearch.com/tenant/WA/index.html?ch=KCHA',
+  'Use this to search for housing in Washington. It is listed by 211 and kept up to date.',
+  'Free.',
+)
+
 const shelterCard = (p: Profile): ActionCard => {
   const entry = p.county ? COUNTY_ENTRY_POINTS[p.county] : undefined
   const entryResource: LinkResource = entry?.url
@@ -79,7 +87,7 @@ const shelterCard = (p: Profile): ActionCard => {
       ? `Find housing in ${p.county}` : 'Find housing near you',
     category: p.urgency === 'tonight' || p.urgency === 'days' ? 'immediate' : 'next',
     steps,
-    resources: [entryResource],
+    resources: [entryResource, housingSearch],
   })
 }
 
@@ -152,13 +160,17 @@ const idCard = (p: Profile): ActionCard => card({
   },
   resources: [
     link('Replace an ID card', 'https://dol.wa.gov/id-cards/replace-id-card',
-      'Use this if your ID was lost or stolen and has not expired. You can order online or by phone (360-902-3900). It is mailed to the address DOL has on file in 7 to 10 days. Update your address first if it changed.'),
+      'Use this if your ID was lost or stolen and has not expired. You can order online or by phone (360-902-3900). It is mailed to the address DOL has on file in 7 to 10 days. Update your address first if it changed.',
+      '$20. Updating only your address online is free.'),
     link('Renew an ID card', 'https://dol.wa.gov/id-cards/renew-id-card',
-      'Use this if your ID has expired or will expire in 90 days. Renew instead of replacing.'),
+      'Use this if your ID has expired or will expire in 90 days. Renew instead of replacing.',
+      '$61 for a 6-year ID or $81 for an 8-year ID.'),
     link('Get a first ID card', 'https://dol.wa.gov/id-cards/get-id-card',
-      'Use this if you never had a Washington ID or need to prove who you are. You make an appointment at a driver licensing office.'),
+      'Use this if you never had a Washington ID or need to prove who you are. You make an appointment at a driver licensing office.',
+      '$61 for a 6-year ID or $81 for an 8-year ID.'),
     link('Free or $5 ID if you have no home', 'https://dol.wa.gov/id-cards/id-help-unhoused',
-      'Use this if you do not have a home right now. You may get an ID for free (one per life) or for $5.'),
+      'Use this if you do not have a home right now. You may get an ID for free (one per life) or for $5.',
+      'Free once if you have no home. $5 if you get public assistance or WIC. You may need a letter from DSHS or a WIC clinic.'),
     link('All ID card choices', 'https://dol.wa.gov/id-cards',
       'Use this if none of the above fits. It includes the Enhanced ID (EID), which works at the border.'),
   ],
@@ -169,6 +181,7 @@ const birthCard = (kids: boolean): ActionCard => {
     label: 'Washington birth records',
     url: 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/ordering-vital-record/birth-record',
     note: 'Use this if you were born in Washington. It shows how to order a birth certificate.',
+    cost: '$25 by mail from the state. Online or phone (VitalChek) is $40.50 or more. In person in King County is $28.50.',
     verificationStatus: 'Verified', lastVerified: '2026-10-26',
     requiresWalkthrough: true, walkthrough: BIRTH_RECORD_WALKTHROUGH,
   }
@@ -182,7 +195,8 @@ const birthCard = (kids: boolean): ActionCard => {
     ],
     resources: [
       birthResource,
-      link('Washington no-fee birth certificates', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/vital-records-no-fee-specific-circumstances', 'Use this if you cannot pay. Some people can get a birth certificate for free.'),
+      link('Washington no-fee birth certificates', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/vital-records-no-fee-specific-circumstances', 'Use this if you cannot pay. Some people can get a birth certificate for free.',
+    '$0 if you were born and live in Washington and have no home. Ask a service provider to help. Some nonprofits give vouchers for in-person orders.'),
     ],
   })
 }
@@ -197,10 +211,12 @@ const ssnCard = (kids: boolean): ActionCard => card({
   ],
   resources: [
     {
-      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to start the application. Social Security may ask for personal information. You may need to go to an office.'),
+      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to start the application. You can usually do it online. Social Security may ask for personal information.',
+        'Free.'),
       requiresWalkthrough: true, walkthrough: SSA_CARD_WALKTHROUGH,
     },
-    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to read what ID you need and if you can do it online.'),
+    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to read what ID you need. You can usually apply online. You only need to go in person to change major details.',
+        'Free.'),
   {
     label: 'Social Security Administration', phone: '800-772-1213',
     note: 'Call this if you cannot use the website or need to ask a question.',

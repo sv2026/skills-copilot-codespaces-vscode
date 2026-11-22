@@ -4,6 +4,7 @@ export type ResourceLink = {
   label: string
   url?: string
   phone?: string
+  cost?: string
   verificationStatus: VerificationStatus
   lastVerified: string
   note?: string
