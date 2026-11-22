@@ -191,7 +191,6 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
 .resource-list { display: grid; gap: 0.75rem; margin: 1.75rem 0 0; padding: 0; list-style: none; }
 .resource-card { padding: 1.2rem; }
 .resource-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.7rem; }
-.resource-title { font-weight: 700; font-size: 1.3rem; }
 .status-pill {
   padding: 0.2rem 0.6rem;
   border-radius: 2rem;
@@ -200,7 +199,7 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
   font-size: 0.9rem;
   font-weight: 700;
 }
-.resource-meta, .resource-note { color: var(--muted); font-size: 0.95rem; }
+.resource-note { color: var(--muted); font-size: 0.95rem; }
 .resource-phone { font-weight: 700; }
 .resource-cost { font-size: 1.05rem; }
 
@@ -225,17 +224,15 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
 .disclaimer { margin-top: 2rem; color: var(--muted); font-size: 1rem; }
 
 .walkthrough h5 { margin: 0 0 0.6rem; font-size: 1.4rem; }
-.walkthrough-summary, .walkthrough-warning { padding: 0.8rem; border-radius: 0.6rem; background: #eef4ed; }
+.walkthrough-note { color: var(--muted); font-size: 0.85rem; }
 .walkthrough-step-list { display: grid; gap: 0.8rem; padding-left: 1.4rem; }
 .walkthrough-step { padding: 1rem; border: 1px solid var(--line); border-radius: 0.7rem; background: #fff; }
 .walkthrough-prep { margin: 1rem 0; padding: 1rem 1.25rem; border: 2px solid #447b64; border-radius: 0.7rem; background: #e9f2e8; }
 .walkthrough-prep h6 { margin: 0 0 0.5rem; font-size: 1.3rem; }
 .walkthrough-prep ul { margin: 0; padding-left: 1.3rem; font-size: 1.1rem; }
 .walkthrough-step h6 { margin: 0; font-size: 1.25rem; }
-.walkthrough-step-status { color: var(--muted); font-size: 0.95rem; }
 .walkthrough-figure { margin: 1rem 0; }
 .walkthrough-figure img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 0.5rem; }
-.walkthrough-ai-notes { margin-top: 1.5rem; border-top: 1px solid var(--line); }
 
 @media (max-width: 540px) {
   .app-shell { padding-inline: 1rem; }
@@ -254,7 +251,7 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
 .emergency-box h2 { margin: 0 0 0.75rem; font-size: 1.6rem; }
 .emergency-box ul { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; font-size: 1.15rem; }
 
-.resource-card a, .notice-inline a, .help-line a, .emergency-box a { font-weight: 700; }
+.resource-card a, .notice-inline a, .emergency-box a { font-weight: 700; }
 .call-link {
   display: inline-block;
   min-height: 3rem;
@@ -264,7 +261,6 @@ button:disabled { opacity: 0.48; cursor: not-allowed; }
   color: #fff;
   text-decoration: none;
 }
-.help-line { margin: 0 0 1rem; font-size: 1.1rem; }
 .emergency-box a { display: inline-block; padding: 0.2rem 0; }
 
 .step-card { margin-top: 1.25rem; padding: 1.25rem; border: 2px solid #4a795f; border-radius: 1rem; background: #f3f8f2; }

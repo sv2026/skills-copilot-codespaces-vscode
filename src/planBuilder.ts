@@ -208,17 +208,17 @@ const ssnCard = (kids: boolean): ActionCard => card({
   title: kids ? "Replace children's Social Security cards" : 'Replace your Social Security card',
   category: 'next',
   steps: [
-    `Ask if you really need a new card. You may only need to know your number. Read what ID you need.${kids ? ' Ask what proof you need to show who the child is and that you are the parent.' : ''}`,
+    `You may only need to know your number, not get a new card. If you need one, read what ID to bring.${kids ? ' Ask what proof you need to show who the child is and that you are the parent.' : ''}`,
     'Start the application. You can usually do it online. Call if you cannot use the website.',
   ],
   resourceSteps: [1, 0, 1],
   resources: [
     {
-      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to start the application. You can usually do it online. Social Security may ask for personal information.',
+      ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to apply online. They will ask for personal information.',
         'Free.'),
       requiresWalkthrough: true, walkthrough: SSA_CARD_WALKTHROUGH,
     },
-    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to read what ID you need. You can usually apply online. You only need to go in person to change major details.',
+    link('SSA replacement card information', 'https://www.ssa.gov/number-card/replace-card', 'Use this to see what ID to bring. Go in person only to change major details.',
         'Free.'),
   {
     label: 'Social Security Administration', phone: '800-772-1213',
@@ -267,13 +267,13 @@ const immigrationCard = (p: Profile): ActionCard => {
     id: 'immigration-support', title: 'Find immigration legal help',
     category: p.immigrationHelp === 'benefits' ? 'immediate' : 'next',
     steps: [
-      'If someone hurt you, start here. This page explains VAWA, U visa and T visa options.',
-      `Use these links to find free or low-cost legal help. ${topic[p.immigrationHelp ?? 'unsure']} Ask how they will use what you share.`,
+      'If someone hurt you, start here.',
+      `${topic[p.immigrationHelp ?? 'unsure']} Ask how they will use what you share.`,
     ],
     resourceSteps: [0, 1, 1],
     resources: [
       link('NWIRP help for survivors of abuse (VAWA)', 'https://www.nwirp.org/resources/VAWA/',
-        'Use this if someone hurt you, such as a partner, family member, trafficker or in a crime. This page explains VAWA, U visa, T visa and I-751 waiver options. VAWA is for abuse by a spouse, parent or adult child who is a U.S. citizen or green card holder. Other pages cover other situations.'),
+        'Use this if someone hurt you or you were a victim of a crime. VAWA is for abuse by a spouse, parent or adult child who is a U.S. citizen or green card holder. U visa, T visa and I-751 waiver pages cover other situations.'),
       link('Northwest Immigrant Rights Project', 'https://www.nwirp.org/', 'Use this to find free or low-cost immigration legal help. Check how to reach them and when they are open.'),
       link('Washington immigration legal help directory', 'https://www.immigrationlawhelp.org/search?state=WA', 'Use this to search for other immigration lawyers and groups near you.'),
     ],

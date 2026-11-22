@@ -140,14 +140,8 @@ function App() {
         </div>
         {showSafetyDetails && (
           <div className="notice" role="note">
-            <p>
-              The leave button does not erase your history. Someone using the same device may still
-              see the pages you visited. A private window can help.
-            </p>
-            <p>
-              We do not save your answers. We do not use accounts or tracking.
-            </p>
-            <p>Other websites may ask for your personal information. They have their own privacy rules.</p>
+            <p>The leave button does not erase your history. A private window can help.</p>
+            <p>We do not save your answers or track you.</p>
           </div>
         )}
       </header>
@@ -222,12 +216,6 @@ function App() {
           )}
 
           {activeCard && (
-            <p className="help-line">
-              Need help now? Call or text <a href="tel:211">211</a>. In danger? Call <a href="tel:911">911</a>.
-            </p>
-          )}
-
-          {activeCard && (
             <section className="slide-card" aria-live="polite">
               <div className="slide-header">
                 <p>
@@ -249,12 +237,9 @@ function App() {
                 <ul className="resource-list">
                   {stepResources.map((resource) => (
                     <li key={`${activeCard.id}-${resource.label}-${resource.url ?? resource.phone ?? ''}`} className="resource-card">
-                      <div className="resource-header">
-                        <p className="resource-title">{resource.label}</p>
-                      </div>
                       {resource.url && (
                         <a href={resource.url} target="_blank" rel="noreferrer">
-                          Open {resource.label} <span aria-hidden="true">↗</span>
+                          {resource.label} <span aria-hidden="true">↗</span>
                         </a>
                       )}
                       {resource.note && <p className="resource-note">{resource.note}</p>}
@@ -264,7 +249,6 @@ function App() {
                           <a className="call-link" href={`tel:${resource.phone.split(',')[0].replace(/[^\d]/g, '')}`}>Call {resource.phone}</a>
                         </p>
                       )}
-                      <p className="resource-meta">Last checked: {resource.lastVerified}</p>
                       {resource.requiresWalkthrough && resource.walkthrough && (
                         <details className="summary-panel walkthrough-panel">
                           <summary>See pictures of each step</summary>
@@ -409,7 +393,7 @@ function App() {
           </div>
 
           <p className="disclaimer">
-            Rules and contact details can change. Check them before you share information or pay money. Some picture guides are still being checked.
+            Details can change. Check before you share information or pay.
           </p>
           <a
             href="https://github.com/sv2026/skills-copilot-codespaces-vscode/issues/new?title=Outdated%20resource%20information&body=Please%20describe%20which%20resource%20or%20requirement%20needs%20review.%20Do%20not%20include%20personal%20information."

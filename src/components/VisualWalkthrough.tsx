@@ -8,26 +8,6 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
   return (
     <section className="walkthrough" aria-label={`${walkthrough.title} walkthrough`}>
       <h5>{walkthrough.title}</h5>
-      <p className="walkthrough-summary">
-        <strong>Goal:</strong> {walkthrough.userGoal}
-      </p>
-      {walkthrough.serviceName && <p>Website: {walkthrough.serviceName}</p>}
-      {walkthrough.summary && <p>{walkthrough.summary}</p>}
-      <p>
-        Official website:{' '}
-        <a href={walkthrough.officialWebsiteUrl} target="_blank" rel="noreferrer">
-          Open the official website
-        </a>
-      </p>
-      <p>
-        Status: <strong>{walkthrough.status}</strong>
-        {walkthrough.lastCapturedAt ? ` · Pictures taken: ${walkthrough.lastCapturedAt}` : ''}
-      </p>
-      {walkthrough.mayBeOutdated && (
-        <p className="walkthrough-warning">
-          These pictures may be old. {walkthrough.outdatedReason}
-        </p>
-      )}
       {walkthrough.beforeYouStart && (
         <div className="walkthrough-prep">
           <h6>Have these ready before you start</h6>
@@ -44,23 +24,6 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
             <h6>
               Step {index + 1}: {step.heading}
             </h6>
-            <p className="walkthrough-step-status">
-              Checked: <strong>{step.verificationStatus}</strong>
-            </p>
-            {step.screenshotEvidence && (
-              <p className="walkthrough-step-status">
-                Picture taken: {step.screenshotEvidence.capturedAt} · Checked by a person: {step.screenshotEvidence.reviewedByHuman ? 'Yes' : 'No'}
-              </p>
-            )}
-            <p>{step.instruction}</p>
-            {step.sourceUrl && (
-              <p>
-                Page:{' '}
-                <a href={step.sourceUrl} target="_blank" rel="noreferrer">
-                  Open the official page
-                </a>
-              </p>
-            )}
             <figure className="walkthrough-figure">
               {step.screenshotUrl ? (
                 <img src={step.screenshotUrl} alt={step.screenshotAlt} loading="lazy" />
@@ -70,19 +33,22 @@ export function VisualWalkthrough({ walkthrough }: VisualWalkthroughProps) {
                 </figcaption>
               )}
             </figure>
+            <p>{step.instruction}</p>
+            {step.sourceUrl && (
+              <p>
+                <a href={step.sourceUrl} target="_blank" rel="noreferrer">
+                  Open this page ↗
+                </a>
+              </p>
+            )}
           </li>
         ))}
       </ol>
-      <div className="walkthrough-ai-notes">
-        <p>
-          <strong>About these pictures:</strong>
+      {walkthrough.lastCapturedAt && (
+        <p className="walkthrough-note">
+          Pictures taken {walkthrough.lastCapturedAt}. The website may have changed.
         </p>
-        <ul>
-          {walkthrough.aiSupportNotes.map((note) => (
-            <li key={note}>{note}</li>
-          ))}
-        </ul>
-      </div>
+      )}
     </section>
   )
 }
