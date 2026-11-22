@@ -88,6 +88,7 @@ const shelterCard = (p: Profile): ActionCard => {
     category: p.urgency === 'tonight' || p.urgency === 'days' ? 'immediate' : 'next',
     steps,
     resources: [entryResource, housingSearch],
+    resourceSteps: [0, 1],
   })
 }
 
@@ -120,6 +121,7 @@ const benefitCard = (p: Profile, kind: 'food' | 'cash'): ActionCard => card({
     'Ask what proof you need and what can wait.',
   ],
   resources: benefitResources(),
+  resourceSteps: [benefitSteps(p).length, 99],
 })
 
 const benefitFollowCard = (p: Profile): ActionCard | undefined => {
@@ -151,9 +153,11 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
 const idCard = (p: Profile): ActionCard => card({
   id: 'photo-id', title: 'Replace your photo ID', category: p.shelter ? 'next' : 'immediate',
   steps: [
-    'Read the note under each link. Open the one that matches your situation.',
-    'A temporary paper ID does not have a photo. It is not accepted as ID.',
+    'Lost or stolen? Expired? Use the link that matches. A temporary paper ID has no photo and is not accepted as ID.',
+    'Never had a Washington ID, or have no home right now? Use one of these.',
+    'None of these fit? See all ID choices.',
   ],
+  resourceSteps: [0, 0, 1, 1, 2],
   usefulDocuments: {
     required: [], helpful: ['Your mailing address'],
     alternativesToConfirm: [], unverified: [],
@@ -190,9 +194,11 @@ const birthCard = (kids: boolean): ActionCard => {
     title: kids ? "Replace children's birth certificates" : 'Replace your birth certificate',
     category: 'next',
     steps: [
-      kids ? 'Find out where each child was born.' : 'Find out where you were born.',
+      kids ? 'Find out where each child was born. If in Washington, use this link.' : 'Find out where you were born. If in Washington, use this link.',
+      'Cannot pay? Some people can get a birth certificate for free.',
       'If it was not in Washington, use that state’s birth records office. Ask what ID they take and what it costs.',
     ],
+    resourceSteps: [0, 1],
     resources: [
       birthResource,
       link('Washington no-fee birth certificates', 'https://doh.wa.gov/licenses-permits-and-certificates/vital-records/vital-records-no-fee-specific-circumstances', 'Use this if you cannot pay. Some people can get a birth certificate for free.',
@@ -206,9 +212,11 @@ const ssnCard = (kids: boolean): ActionCard => card({
   title: kids ? "Replace children's Social Security cards" : 'Replace your Social Security card',
   category: 'next',
   steps: [
-    'Ask if you really need a new card. You may only need to know your number.',
+    'Ask if you really need a new card. You may only need to know your number. Read what ID you need.',
     ...(kids ? ['Ask what proof you need to show who the child is and that you are the parent.'] : []),
+    'Start the application. You can usually do it online. Call if you cannot use the website.',
   ],
+  resourceSteps: [kids ? 2 : 1, 0, kids ? 2 : 1],
   resources: [
     {
       ...link('Start a Social Security card application', 'https://secure.ssa.gov/ossnap/public/', 'Use this to start the application. You can usually do it online. Social Security may ask for personal information.',
@@ -261,10 +269,12 @@ const immigrationCard = (p: Profile): ActionCard => {
     id: 'immigration-support', title: 'Find immigration legal help',
     category: p.immigrationHelp === 'benefits' ? 'immediate' : 'next',
     steps: [
+      'If someone hurt you, start here. This page explains VAWA, U visa and T visa options.',
       topic[p.immigrationHelp ?? 'unsure'],
       'Ask how to make an appointment.',
       'Before you share anything, ask how they will use it.',
     ],
+    resourceSteps: [0, 1, 1],
     resources: [
       link('NWIRP help for survivors of abuse (VAWA)', 'https://www.nwirp.org/resources/VAWA/',
         'Use this if someone hurt you, such as a partner, family member, trafficker or in a crime. This page explains VAWA, U visa, T visa and I-751 waiver options. VAWA is for abuse by a spouse, parent or adult child who is a U.S. citizen or green card holder. Other pages cover other situations.'),

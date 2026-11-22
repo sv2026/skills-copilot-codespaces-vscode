@@ -47,6 +47,10 @@ function App() {
   const activeCard: ActionCard | undefined = planCards[safeSlideIndex]
   const stepIndex = activeCard && stepPosition.cardId === activeCard.id
     ? Math.min(stepPosition.index, activeCard.steps.length - 1) : 0
+  const stepResources = activeCard
+    ? activeCard.resources.filter((_, i) =>
+        Math.min(activeCard.resourceSteps?.[i] ?? 0, activeCard.steps.length - 1) === stepIndex)
+    : []
   const onLastStep = !activeCard || stepIndex >= activeCard.steps.length - 1
   const goToStep = (index: number) => activeCard && setStepPosition({ cardId: activeCard.id, index })
 
@@ -238,10 +242,12 @@ function App() {
                 </p>
               )}
 
-              <h4>Links</h4>
-              {activeCard.resources.length > 0 ? (
+              <div className="step-card">
+                <p className="step-count">Step {stepIndex + 1} of {activeCard.steps.length}</p>
+                <p className="step-text">{activeCard.steps[stepIndex]}</p>
+              {stepResources.length > 0 && (
                 <ul className="resource-list">
-                  {activeCard.resources.map((resource) => (
+                  {stepResources.map((resource) => (
                     <li key={`${activeCard.id}-${resource.label}-${resource.url ?? resource.phone ?? ''}`} className="resource-card">
                       <div className="resource-header">
                         <p className="resource-title">{resource.label}</p>
@@ -270,14 +276,9 @@ function App() {
                     </li>
                   ))}
                 </ul>
-              ) : (
-                null
               )}
 
               <h4>Steps</h4>
-              <div className="step-card">
-                <p className="step-count">Step {stepIndex + 1} of {activeCard.steps.length}</p>
-                <p className="step-text">{activeCard.steps[stepIndex]}</p>
                 {activeCard.steps.length > 1 && (
                   <div className="step-controls">
                     <button type="button" className="secondary" disabled={stepIndex === 0} onClick={() => goToStep(stepIndex - 1)}>

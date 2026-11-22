@@ -73,6 +73,8 @@ export type ActionCard = {
   missingDocsPlan: string
   endGoal: string
   resources: ResourceLink[]
+  // Step index for each resource (same order as resources). Missing means the first step.
+  resourceSteps?: number[]
 }
 
 export type CountyEntry = {
