@@ -270,9 +270,7 @@ const immigrationCard = (p: Profile): ActionCard => {
     category: p.immigrationHelp === 'benefits' ? 'immediate' : 'next',
     steps: [
       'If someone hurt you, start here. This page explains VAWA, U visa and T visa options.',
-      topic[p.immigrationHelp ?? 'unsure'],
-      'Ask how to make an appointment.',
-      'Before you share anything, ask how they will use it.',
+      `Use these links to find free or low-cost legal help. ${topic[p.immigrationHelp ?? 'unsure']} Ask how they will use what you share.`,
     ],
     resourceSteps: [0, 1, 1],
     resources: [
