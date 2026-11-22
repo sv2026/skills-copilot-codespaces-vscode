@@ -238,6 +238,43 @@ function App() {
                 </p>
               )}
 
+              <h4>Links</h4>
+              {activeCard.resources.length > 0 ? (
+                <ul className="resource-list">
+                  {activeCard.resources.map((resource) => (
+                    <li key={`${activeCard.id}-${resource.label}-${resource.url ?? resource.phone ?? ''}`} className="resource-card">
+                      <div className="resource-header">
+                        <p className="resource-title">{resource.label}</p>
+                      </div>
+                      {resource.url && (
+                        <a href={resource.url} target="_blank" rel="noreferrer">
+                          Open {resource.label} <span aria-hidden="true">↗</span>
+                        </a>
+                      )}
+                      {resource.note && <p className="resource-note">{resource.note}</p>}
+                      {resource.cost && <p className="resource-cost"><strong>Cost:</strong> {resource.cost}</p>}
+                      {resource.phone && (
+                        <p className="resource-phone">
+                          <a className="call-link" href={`tel:${resource.phone.split(',')[0].replace(/[^\d]/g, '')}`}>Call {resource.phone}</a>
+                        </p>
+                      )}
+                      <p className="resource-meta">Last checked: {resource.lastVerified}</p>
+                      {resource.requiresWalkthrough && resource.walkthrough && (
+                        <details className="summary-panel walkthrough-panel">
+                          <summary>See pictures of each step</summary>
+                          <div className="summary-panel-content">
+                            <VisualWalkthrough walkthrough={resource.walkthrough} />
+                          </div>
+                        </details>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                null
+              )}
+
+              <h4>Steps</h4>
               <div className="step-card">
                 <p className="step-count">Step {stepIndex + 1} of {activeCard.steps.length}</p>
                 <p className="step-text">{activeCard.steps[stepIndex]}</p>
@@ -290,40 +327,6 @@ function App() {
                 </div>
               )}
 
-              {activeCard.resources.length > 0 ? (
-                <ul className="resource-list">
-                  {activeCard.resources.map((resource) => (
-                    <li key={`${activeCard.id}-${resource.label}-${resource.url ?? resource.phone ?? ''}`} className="resource-card">
-                      <div className="resource-header">
-                        <p className="resource-title">{resource.label}</p>
-                      </div>
-                      {resource.url && (
-                        <a href={resource.url} target="_blank" rel="noreferrer">
-                          Open {resource.label} <span aria-hidden="true">↗</span>
-                        </a>
-                      )}
-                      {resource.note && <p className="resource-note">{resource.note}</p>}
-                      {resource.cost && <p className="resource-cost"><strong>Cost:</strong> {resource.cost}</p>}
-                      {resource.phone && (
-                        <p className="resource-phone">
-                          <a className="call-link" href={`tel:${resource.phone.split(',')[0].replace(/[^\d]/g, '')}`}>Call {resource.phone}</a>
-                        </p>
-                      )}
-                      <p className="resource-meta">Last checked: {resource.lastVerified}</p>
-                      {resource.requiresWalkthrough && resource.walkthrough && (
-                        <details className="summary-panel walkthrough-panel">
-                          <summary>See pictures of each step</summary>
-                          <div className="summary-panel-content">
-                            <VisualWalkthrough walkthrough={resource.walkthrough} />
-                          </div>
-                        </details>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                null
-              )}
                 </>
               )}
             </section>

@@ -266,6 +266,8 @@ const immigrationCard = (p: Profile): ActionCard => {
       'Before you share anything, ask how they will use it.',
     ],
     resources: [
+      link('NWIRP help for survivors of abuse (VAWA)', 'https://www.nwirp.org/resources/VAWA/',
+        'Use this if a spouse, parent or adult child who is a U.S. citizen or green card holder hurt you. A VAWA petition lets you ask for your own immigration papers without their help or knowledge. It may not fit if the person who hurt you is not a citizen or green card holder. Other options may exist, so talk to a lawyer.'),
       link('Northwest Immigrant Rights Project', 'https://www.nwirp.org/', 'Use this to find free or low-cost immigration legal help. Check how to reach them and when they are open.'),
       link('Washington immigration legal help directory', 'https://www.immigrationlawhelp.org/search?state=WA', 'Use this to search for other immigration lawyers and groups near you.'),
     ],
