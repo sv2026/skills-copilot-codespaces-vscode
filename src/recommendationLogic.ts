@@ -35,7 +35,6 @@ export const COUNTY_OPTIONS = [
   'Grays Harbor County',
   'Wahkiakum County',
   'Other / not listed',
-  "I'm not sure",
 ]
 
 const values = (group: Record<string, string>) => Object.values(group)
@@ -182,7 +181,6 @@ export type Profile = {
   getsCash: boolean
   waiting: boolean
   pendingBenefits?: keyof typeof OPT.pending
-  kidsUnsure: boolean
   docsAnswered: boolean
   hasDoc: (doc: keyof typeof OPT.docs) => boolean
   docAnswered: (doc: keyof typeof OPT.docs) => boolean
@@ -217,7 +215,6 @@ export const toProfile = (answers: AnswerMap): Profile => {
     pendingBenefits: benefits.includes(OPT.benefits.waiting)
       ? keyOf(OPT.pending, answers.pendingBenefits?.[0])
       : undefined,
-    kidsUnsure: kidsNeeds.includes(OPT.kids.unsure),
     docsAnswered: owned.length > 0,
     hasDoc: (doc) => owned.includes(OPT.docs[doc]),
     docAnswered: (doc) => {

@@ -86,7 +86,7 @@ const shelterCard = (p: Profile): ActionCard => {
   steps.push('For long-term housing (not emergency shelter), you can search yourself.')
   return card({
     id: 'shelter-entry',
-    title: p.county && !['Other / not listed', "I'm not sure"].includes(p.county)
+    title: p.county && !['Other / not listed'].includes(p.county)
       ? `Find housing in ${p.county}` : 'Find housing near you',
     category: p.urgency === 'tonight' || p.urgency === 'days' ? 'immediate' : 'next',
     steps,
@@ -130,7 +130,7 @@ const benefitFollowCard = (p: Profile): ActionCard | undefined => {
     title: 'Check on your application',
     category: 'immediate',
     steps: [
-      `Check your application on Washington Connection, or ask DSHS. ${!p.pendingBenefits || p.pendingBenefits === 'unsure'
+      `Check your application on Washington Connection, or ask DSHS. ${!p.pendingBenefits
         ? 'Find out what you applied for before you apply again. ' : ''}Tell them if you cannot safely give something they ask for.`,
     ],
     resources: benefitResources(),
@@ -261,14 +261,13 @@ const immigrationCard = (p: Profile): ActionCard => {
     forms: 'Ask for help with your forms.',
     papers: 'Ask how to find or replace your immigration papers.',
     benefits: 'Ask if getting food or cash help could affect your immigration case.',
-    unsure: 'Ask what immigration help they offer.',
   }
   return card({
     id: 'immigration-support', title: 'Find immigration legal help',
     category: p.immigrationHelp === 'benefits' ? 'immediate' : 'next',
     steps: [
       'If someone hurt you, start here.',
-      `${topic[p.immigrationHelp ?? 'unsure']} Ask how they will use what you share.`,
+      `${topic[p.immigrationHelp ?? 'options']} Ask how they will use what you share.`,
     ],
     resourceSteps: [0, 1, 1],
     resources: [
@@ -280,16 +279,6 @@ const immigrationCard = (p: Profile): ActionCard => {
   })
 }
 
-const guidanceCard = (kids: boolean): ActionCard => card({
-  id: kids ? 'children-unsure' : 'choose-priorities',
-  title: kids ? 'Choose what your children need' : 'Choose where to start',
-  category: 'next',
-  steps: kids
-    ? ['Go back and pick school or your children’s papers if they fit. We do not have steps for other needs for children yet. Call 211 for other help.']
-    : ['Go back and pick what you want help with. You can pick just one thing.'],
-  resources: [familyDirectory],
-})
-
 export const buildCards = (p: Profile): ActionCard[] => {
   const cards: ActionCard[] = []
   if (p.shelter) cards.push(shelterCard(p))
@@ -299,7 +288,7 @@ export const buildCards = (p: Profile): ActionCard[] => {
   if (p.food || p.cash) {
     const follow = benefitFollowCard(p)
     if (follow) cards.push(follow)
-    const pendingUnknown = p.waiting && (!p.pendingBenefits || p.pendingBenefits === 'unsure')
+    const pendingUnknown = p.waiting && !p.pendingBenefits
     const pendingFood = p.waiting && (p.pendingBenefits === 'food' || p.pendingBenefits === 'both')
     const pendingCash = p.waiting && (p.pendingBenefits === 'cash' || p.pendingBenefits === 'both')
     if (p.food && !p.getsFood && !pendingUnknown && !pendingFood) cards.push(benefitCard(p, 'food'))
@@ -316,7 +305,6 @@ export const buildCards = (p: Profile): ActionCard[] => {
     if (p.docAnswered('kidsSsn') && !p.hasDoc('kidsSsn')) cards.push(ssnCard(true))
   }
   if (p.immigration && p.immigrationHelp !== 'benefits') cards.push(immigrationCard(p))
-  if (p.kidsUnsure && !p.school && !p.kidsDocs) cards.push(guidanceCard(true))
   if (!cards.length && (p.docs || p.kidsDocs)) cards.push(card({
     id: 'documents-available',
     title: 'Your documents',

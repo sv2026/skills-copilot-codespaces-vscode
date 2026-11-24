@@ -48,9 +48,9 @@ describe('questions', () => {
   describe('scenario coverage', () => {
     const scenarios: { name: string; answers: AnswerMap; expected: string[]; absent?: string[] }[] = [
       { name: '1 Clark: tonight, food, online', answers: {
-        needs: [OPT.needs.shelter, OPT.needs.food, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Clark County'],
+        needs: [OPT.needs.shelter, OPT.needs.food, OPT.needs.kids], kidsNeeds: [OPT.kids.school], county: ['Clark County'],
         urgency: [OPT.urgency.tonight], benefits: [OPT.benefits.none],
-      }, expected: ['shelter-entry', 'food-now', 'dshs-food-assistance', 'children-unsure'] },
+      }, expected: ['shelter-entry', 'food-now', 'dshs-food-assistance', 'school-liaison'] },
       { name: '2 Snohomish: housing and enrollment', answers: {
         needs: [OPT.needs.shelter, OPT.needs.kids], kidsNeeds: [OPT.kids.school], county: ['Snohomish County'],
         urgency: [OPT.urgency.days],
@@ -64,7 +64,7 @@ describe('questions', () => {
         needs: [OPT.needs.food], county: ['Whatcom County'], benefits: [OPT.benefits.food],
       }, expected: ['food-now', 'dshs-update'], absent: ['dshs-food-assistance'] },
       { name: '5 Pierce: cash application pending, type unknown', answers: {
-        needs: [OPT.needs.cash, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Pierce County'], benefits: [OPT.benefits.waiting], pendingBenefits: [OPT.pending.unsure],
+        needs: [OPT.needs.cash, OPT.needs.kids], kidsNeeds: [OPT.kids.school], county: ['Pierce County'], benefits: [OPT.benefits.waiting], pendingBenefits: [OPT.pending.both],
       }, expected: ['dshs-pending'], absent: ['dshs-cash-assistance'] },
       { name: '6 Thurston: food benefit and cash', answers: {
         needs: [OPT.needs.food, OPT.needs.cash], county: ['Thurston County'], benefits: [OPT.benefits.food],
@@ -83,10 +83,10 @@ describe('questions', () => {
         needs: [OPT.needs.immigration], county: ['Skagit County'], immigrationHelp: [OPT.immigration.options],
       }, expected: ['immigration-support'] },
       { name: '11 Grays Harbor: immigration forms and cash', answers: {
-        needs: [OPT.needs.immigration, OPT.needs.cash, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Grays Harbor County'], benefits: [OPT.benefits.none], immigrationHelp: [OPT.immigration.forms],
+        needs: [OPT.needs.immigration, OPT.needs.cash, OPT.needs.kids], kidsNeeds: [OPT.kids.school], county: ['Grays Harbor County'], benefits: [OPT.benefits.none], immigrationHelp: [OPT.immigration.forms],
       }, expected: ['immigration-support', 'dshs-cash-assistance'] },
       { name: '12 Jefferson: immigration papers, in person', answers: {
-        needs: [OPT.needs.immigration, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ['Jefferson County'], immigrationHelp: [OPT.immigration.papers],
+        needs: [OPT.needs.immigration, OPT.needs.kids], kidsNeeds: [OPT.kids.school], county: ['Jefferson County'], immigrationHelp: [OPT.immigration.papers],
       }, expected: ['immigration-support'] },
       { name: '13 Whatcom: immigration benefits concern', answers: {
         needs: [OPT.needs.food, OPT.needs.cash, OPT.needs.immigration], county: ['Whatcom County'], benefits: [OPT.benefits.none], immigrationHelp: [OPT.immigration.benefits],
@@ -95,9 +95,6 @@ describe('questions', () => {
         needs: [OPT.needs.shelter, OPT.needs.food], county: ['San Juan County'],
         urgency: [OPT.urgency.tonight], benefits: [OPT.benefits.waiting],
       }, expected: ['shelter-entry', 'food-now', 'dshs-pending'], absent: ['dshs-food-assistance'] },
-      { name: '15 unknown: children’s needs uncertain', answers: {
-        needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ["I'm not sure"],
-      }, expected: ['children-unsure'], absent: ['school-support', 'birth-records-children'] },
     ]
 
     it.each(scenarios)('$name', ({ answers, expected, absent }) => {
@@ -127,7 +124,6 @@ describe('questions', () => {
       const base = { needs: [OPT.needs.food, OPT.needs.cash], benefits: [OPT.benefits.waiting] }
       expect(ids({ ...base, pendingBenefits: [OPT.pending.food] })).toContain('dshs-cash-assistance')
       expect(ids({ ...base, pendingBenefits: [OPT.pending.food] })).not.toContain('dshs-food-assistance')
-      expect(ids({ ...base, pendingBenefits: [OPT.pending.unsure] })).not.toContain('dshs-cash-assistance')
     })
 
     it('ignores a stale contact answer when generating recommendations', () => {
@@ -149,7 +145,6 @@ describe('questions', () => {
 
     it('provides links on guidance and available-document slides', () => {
       const inputs: AnswerMap[] = [
-        { needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.unsure] },
         { needs: [OPT.needs.docs], docs: [OPT.docs.photoId, OPT.docs.birth, OPT.docs.ssn] },
         { needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.docs], docs: [OPT.docs.kidsBirth, OPT.docs.kidsSsn] },
       ]
@@ -183,7 +178,7 @@ describe('personas', () => {
       county: ['Snohomish County'],
       urgency: [OPT.urgency.days],
     }
-    expect(steps({ ...base, needs: [OPT.needs.shelter, OPT.needs.kids], kidsNeeds: [OPT.kids.unsure] }, 'shelter-entry')).toContain('children')
+    expect(steps({ ...base, needs: [OPT.needs.shelter, OPT.needs.kids], kidsNeeds: [OPT.kids.school] }, 'shelter-entry')).toContain('children')
     expect(steps({ ...base, children: ['Yes'] }, 'shelter-entry')).not.toContain('children')
     expect(cards(base)[0].resources[0].phone).toBe('360-862-4357')
   })
@@ -289,7 +284,7 @@ describe('personas', () => {
       urgency: [OPT.urgency.tonight],
       docs: [OPT.docs.none],
       schoolNeeds: Object.values(OPT.school),
-      immigrationHelp: [OPT.immigration.unsure],
+      immigrationHelp: [OPT.immigration.options],
     }
     const result = cards(a)
     expect(new Set(result.map((c) => c.id)).size).toBe(result.length)
