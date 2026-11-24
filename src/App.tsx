@@ -27,6 +27,36 @@ function App() {
 
   const headingRef = useRef<HTMLHeadingElement>(null)
 
+  // Keep each screen in the browser history so the Back button returns to it.
+  const navKey = JSON.stringify({ currentQuestionIndex, showResults, currentSlideIndex, stepPosition })
+  useEffect(() => {
+    const nav = { currentQuestionIndex, showResults, currentSlideIndex, stepPosition }
+    const saved = window.history.state as { nav?: typeof nav } | null
+    if (!saved?.nav) {
+      window.history.replaceState({ nav, answers }, '')
+    } else if (JSON.stringify(saved.nav) !== navKey) {
+      window.history.pushState({ nav, answers }, '')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navKey])
+  useEffect(() => {
+    const saved = window.history.state as { nav?: unknown } | null
+    if (saved?.nav) window.history.replaceState({ ...saved, answers }, '')
+  }, [answers])
+  useEffect(() => {
+    const onPop = (event: PopStateEvent) => {
+      const saved = event.state as { nav?: { currentQuestionIndex: number; showResults: boolean; currentSlideIndex: number; stepPosition: { cardId: string; index: number } }; answers?: AnswerMap } | null
+      if (!saved?.nav) return
+      setAnswers(saved.answers ?? {})
+      setCurrentQuestionIndex(saved.nav.currentQuestionIndex)
+      setShowResults(saved.nav.showResults)
+      setCurrentSlideIndex(saved.nav.currentSlideIndex)
+      setStepPosition(saved.nav.stepPosition)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
+
   const visibleQuestions = useMemo(() => buildVisibleQuestions(answers), [answers])
   const safeQuestionIndex = Math.min(currentQuestionIndex, Math.max(visibleQuestions.length - 1, 0))
   const question = visibleQuestions[safeQuestionIndex]

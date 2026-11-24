@@ -317,7 +317,6 @@ export const buildCards = (p: Profile): ActionCard[] => {
   }
   if (p.immigration && p.immigrationHelp !== 'benefits') cards.push(immigrationCard(p))
   if (p.kidsUnsure && !p.school && !p.kidsDocs) cards.push(guidanceCard(true))
-  if (p.unsure) cards.push(guidanceCard(false))
   if (!cards.length && (p.docs || p.kidsDocs)) cards.push(card({
     id: 'documents-available',
     title: 'Your documents',

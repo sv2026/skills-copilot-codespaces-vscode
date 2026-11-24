@@ -92,9 +92,9 @@ describe('questions', () => {
         needs: [OPT.needs.food, OPT.needs.cash, OPT.needs.immigration], county: ['Whatcom County'], benefits: [OPT.benefits.none], immigrationHelp: [OPT.immigration.benefits],
       }, expected: ['food-now', 'immigration-support', 'dshs-food-assistance', 'dshs-cash-assistance'] },
       { name: '14 San Juan: explicit housing and pending benefit', answers: {
-        needs: [OPT.needs.unsure, OPT.needs.shelter, OPT.needs.food], county: ['San Juan County'],
+        needs: [OPT.needs.shelter, OPT.needs.food], county: ['San Juan County'],
         urgency: [OPT.urgency.tonight], benefits: [OPT.benefits.waiting],
-      }, expected: ['shelter-entry', 'food-now', 'dshs-pending', 'choose-priorities'], absent: ['dshs-food-assistance'] },
+      }, expected: ['shelter-entry', 'food-now', 'dshs-pending'], absent: ['dshs-food-assistance'] },
       { name: '15 unknown: children’s needs uncertain', answers: {
         needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.unsure], county: ["I'm not sure"],
       }, expected: ['children-unsure'], absent: ['school-support', 'birth-records-children'] },
@@ -123,11 +123,6 @@ describe('questions', () => {
       expect(steps(answers, 'documents-available')).toContain('answer the documents question')
     })
 
-    it('does not create unrelated cards for uncertainty', () => {
-      expect(ids({ needs: [OPT.needs.unsure] })).toEqual(['choose-priorities'])
-      expect(qIds({ needs: [OPT.needs.unsure] })).not.toContain('urgency')
-    })
-
     it('allows a new benefit application when the other benefit is pending', () => {
       const base = { needs: [OPT.needs.food, OPT.needs.cash], benefits: [OPT.benefits.waiting] }
       expect(ids({ ...base, pendingBenefits: [OPT.pending.food] })).toContain('dshs-cash-assistance')
@@ -154,7 +149,6 @@ describe('questions', () => {
 
     it('provides links on guidance and available-document slides', () => {
       const inputs: AnswerMap[] = [
-        { needs: [OPT.needs.unsure] },
         { needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.unsure] },
         { needs: [OPT.needs.docs], docs: [OPT.docs.photoId, OPT.docs.birth, OPT.docs.ssn] },
         { needs: [OPT.needs.kids], kidsNeeds: [OPT.kids.docs], docs: [OPT.docs.kidsBirth, OPT.docs.kidsSsn] },

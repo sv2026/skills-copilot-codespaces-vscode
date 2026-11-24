@@ -6,7 +6,6 @@ export const OPT = {
     docs: 'Replacing ID or other papers',
     kids: 'Help for my children',
     immigration: 'Immigration papers or legal help',
-    unsure: "I'm not sure where to start",
   },
   kids: {
     school: 'School',

@@ -175,7 +175,6 @@ export type Profile = {
   kidsDocs: boolean
   school: boolean
   immigration: boolean
-  unsure: boolean
   children: boolean
   county?: string
   urgency?: 'tonight' | 'days' | 'weeks' | 'later'
@@ -209,7 +208,6 @@ export const toProfile = (answers: AnswerMap): Profile => {
     kidsDocs: kidsNeeds.includes(OPT.kids.docs),
     school: kidsNeeds.includes(OPT.kids.school),
     immigration: needs.includes(OPT.needs.immigration),
-    unsure: needs.includes(OPT.needs.unsure),
     children: kids,
     county: COUNTY_OPTIONS.includes(answers.county?.[0] ?? '') ? answers.county?.[0] : undefined,
     urgency: keyOf(OPT.urgency, answers.urgency?.[0]),
