@@ -6,12 +6,10 @@ export const OPT = {
     docs: 'Replacing ID or other papers',
     kids: 'Help for my children',
     immigration: 'Immigration papers or legal help',
-    unsure: "I'm not sure where to start",
   },
   kids: {
     school: 'School',
     docs: 'Their papers (birth certificate, Social Security card)',
-    unsure: 'Not sure yet',
   },
   urgency: {
     tonight: 'Tonight',
@@ -29,7 +27,6 @@ export const OPT = {
     food: 'Food help',
     cash: 'Cash help',
     both: 'Both food and cash help',
-    unsure: "I'm not sure",
   },
   docs: {
     photoId: 'My photo ID',
@@ -53,6 +50,5 @@ export const OPT = {
     forms: 'Help with forms',
     papers: 'Replace or find my immigration papers',
     benefits: 'I am worried about applying for help',
-    unsure: 'Not sure',
   },
 } as const
